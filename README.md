@@ -1,4 +1,4 @@
-# miner clone
+# Miner clone
  
-Credit:
-	Cascadeur
+Credit:  
+- [Cascadeur](https://cascadeur.com/)
