@@ -1,2 +1,4 @@
 # miner clone
  
+Credit:
+	Cascadeur
