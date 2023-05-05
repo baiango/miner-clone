@@ -3,20 +3,19 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://24daq3yiduqs"
-path.s3tc="res://.godot/imported/blocks_grass tilemap.png-91373d22db8d9f3f893209ce51b33541.s3tc.ctex"
+path="res://.godot/imported/blocks_grass tilemap.png-91373d22db8d9f3f893209ce51b33541.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://model/blocks/res/blocks_grass tilemap.png"
-dest_files=["res://.godot/imported/blocks_grass tilemap.png-91373d22db8d9f3f893209ce51b33541.s3tc.ctex"]
+dest_files=["res://.godot/imported/blocks_grass tilemap.png-91373d22db8d9f3f893209ce51b33541.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=3
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1

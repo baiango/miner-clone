@@ -22,7 +22,7 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("ctrl + f4"):
 		position = Vector3.BACK
-		Glob.BLKS.regenerate()
+		Glob.BLKS.reset()
 		$reset.play()
 
 func _lerp3_xz(from: Vector3, to: Vector3, weight: float) -> Vector3:
