@@ -3,7 +3,7 @@ extends GridMap
 
 
 enum { Dirt, Grass, Stone, Void_grass, Crystal_blue }
-func _ready(): # "Scene -> Reload Saved Scene" to see the changes!
+func regenerate():
 	clear()
 
 	var dimension = Vector3i(32, 32, 4)
@@ -32,3 +32,6 @@ func _ready(): # "Scene -> Reload Saved Scene" to see the changes!
 
 				set_cell_item(Vector3i(x, -1 - y, z), blk_id)
 
+
+func _ready(): # "Scene -> Reload Saved Scene" to see the changes!
+	regenerate()

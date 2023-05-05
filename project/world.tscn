@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://c7qc68x2vpdj5" path="res://model/kira/kira.tscn" id="1_1h06n"]
 [ext_resource type="ArrayMesh" uid="uid://dqy0cfh26sual" path="res://model/tree/tree_Cube001.res" id="2_mf88u"]
-[ext_resource type="Texture2D" uid="uid://bv1g88v7jiekj" path="res://image/hdri.png" id="3_jxtt8"]
+[ext_resource type="Texture2D" uid="uid://b1scyuit6ifij" path="res://image/hdri.png" id="3_jxtt8"]
 [ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="4_cqnj5"]
 [ext_resource type="Script" path="res://gd/map_gen.gd" id="5_bunlt"]
 
@@ -27,7 +27,6 @@ adjustment_saturation = 1.05
 [node name="world" type="Node3D"]
 
 [node name="kira" parent="." instance=ExtResource("1_1h06n")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 
 [node name="trees" type="Node" parent="."]
 

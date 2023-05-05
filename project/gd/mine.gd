@@ -9,6 +9,7 @@ func _input(_event):
 
 
 @onready var hit := $"../Skeleton3D/pipe/pipe/hit"
+@onready var hit_miss := $"../Skeleton3D/pipe/pipe/hit/hit_miss"
 @onready var blks := Glob.BLKS as GridMap
 func _on_break_block_timeout():
 	var pos := Vector3i(floor(hit.global_position))
@@ -17,5 +18,10 @@ func _on_break_block_timeout():
 	if blks.get_cell_item(pos) == GridMap.INVALID_CELL_ITEM:
 		pos.y -= 1
 
-	blks.set_cell_item(pos, GridMap.INVALID_CELL_ITEM)
+	if blks.get_cell_item(pos) != GridMap.INVALID_CELL_ITEM:
+		blks.set_cell_item(pos, GridMap.INVALID_CELL_ITEM)
+		hit.play()
+	else:
+		hit_miss.play()
+
 	$BreakPos.position = pos + Vector3i.ONE

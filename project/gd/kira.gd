@@ -21,8 +21,9 @@ func _input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if Input.mouse_mode else Input.MOUSE_MODE_CAPTURED
 
 	if Input.is_action_just_pressed("ctrl + f4"):
-		position = Vector3.ZERO
-
+		position = Vector3.BACK
+		Glob.BLKS.regenerate()
+		$reset.play()
 
 func _lerp3_xz(from: Vector3, to: Vector3, weight: float) -> Vector3:
 	from.x = lerp(from.x, to.x, weight)
@@ -32,6 +33,7 @@ func _lerp3_xz(from: Vector3, to: Vector3, weight: float) -> Vector3:
 
 enum OneshotRequest { Empty, Fire }
 func _physics_process(delta):
+	var jmp_snd := $Skeleton3D/Body/jump
 	# movement
 	var input := Vector2(Input.get_axis("w","s"), Input.get_axis("a","d"))
 
@@ -41,6 +43,7 @@ func _physics_process(delta):
 
 	if Input.is_action_just_pressed(" ") and is_on_floor():
 		velocity.y = 9
+		jmp_snd.play()
 
 	velocity.y = clampf(velocity.y, -55, 55)
 	move_and_slide()
@@ -58,7 +61,8 @@ func _physics_process(delta):
 	var movement_input_strength := signf(abs(input.x) + abs(input.y))
 	var walk_blend := ani.get("parameters/walk/blend_amount") as float
 
-	walk_blend = lerpf(walk_blend, movement_input_strength, delta * 5)
+	var walk_blend_lerped = lerpf(walk_blend, movement_input_strength, delta * 5)
+	walk_blend = walk_blend_lerped if walk_blend_lerped > 0.05 else 0.0
 	ani.set("parameters/walk/blend_amount", walk_blend)
 
 	if Input.is_action_just_pressed("lmb"):
