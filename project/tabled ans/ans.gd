@@ -2,7 +2,7 @@
 extends GridMap
 
 enum PerformanceInfo { None, Time, Info, Verbose }
-var dbg := PerformanceInfo.None
+var dbg := PerformanceInfo.Time
 
 enum { Dirt, Grass, Stone, Void_grass, Crystal_blue }
 
@@ -23,7 +23,7 @@ func clean() -> float:
 
 
 func reset() -> void:
-	_regenerate(Vector3i(64, 64, 64))
+	_regenerate(Vector3i(32, 32, 32))
 
 
 func prt_perf_stat(func_name: String, clean_time: float, regenerating_time: float, bps: int) -> void:
@@ -80,7 +80,6 @@ func _regenerate(dimension: Vector3i) -> void:
 		for y in dimension.y:
 			for z in dimension.z:
 				set_cell_item(Vector3i(x, ~y, z), blk_id_arr[x][y][z])
-
 
 	if dbg >= PerformanceInfo.Time:
 		var block_sum := dimension.x * dimension.y * dimension.z

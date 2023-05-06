@@ -32,7 +32,6 @@ skeleton = NodePath("../..")
 script = ExtResource("5_gntjb")
 
 [node name="GridMap" type="GridMap" parent="."]
-visible = false
 mesh_library = ExtResource("1_1mu4v")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_x7kmu")
@@ -46,6 +45,10 @@ shadow_enabled = true
 
 [node name="kira" parent="." instance=ExtResource("4_kj1ay")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(0.996931, 0.000404015, 0.078284, 0, 0.999987, -0.00516082, -0.078285, 0.00514498, 0.996918, 18.0368, -23.1366, 1.53233)
+omni_range = 4096.0
 
 [connection signal="tree_exiting" from="chunks/MeshInstance3D" to="chunks/MeshInstance3D" method="_on_tree_exiting"]
 [connection signal="tree_exiting" from="GridMap" to="GridMap" method="_on_tree_exiting"]
