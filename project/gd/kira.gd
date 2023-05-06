@@ -4,6 +4,12 @@ extends CharacterBody3D
 @onready var v := $h/v
 
 
+func _lerp3_xz(from: Vector3, to: Vector3, weight: float) -> Vector3:
+	from.x = lerp(from.x, to.x, weight)
+	from.z = lerp(from.z, to.x, weight)
+	return from
+
+
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -24,11 +30,6 @@ func _input(event: InputEvent) -> void:
 		position = Vector3.BACK
 		Glob.BLKS.reset()
 		$reset.play()
-
-func _lerp3_xz(from: Vector3, to: Vector3, weight: float) -> Vector3:
-	from.x = lerp(from.x, to.x, weight)
-	from.z = lerp(from.z, to.x, weight)
-	return from
 
 
 enum OneshotRequest { Empty, Fire }

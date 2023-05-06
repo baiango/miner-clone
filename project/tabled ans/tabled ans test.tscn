@@ -1,9 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://d1xjvnvdqrcdd"]
+[gd_scene load_steps=11 format=3 uid="uid://d1xjvnvdqrcdd"]
 
 [ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="1_1mu4v"]
 [ext_resource type="Script" path="res://tabled ans/ans.gd" id="2_x7kmu"]
 [ext_resource type="Texture2D" uid="uid://b1scyuit6ifij" path="res://image/hdri.png" id="3_kw572"]
 [ext_resource type="PackedScene" uid="uid://c7qc68x2vpdj5" path="res://model/kira/kira.tscn" id="4_kj1ay"]
+[ext_resource type="Material" uid="uid://ch2onppkn6mb1" path="res://model/blocks/res/blocks.material" id="5_3ge45"]
+[ext_resource type="Script" path="res://tabled ans/cull.gd" id="5_gntjb"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_tf246"]
 use_debanding = false
@@ -20,9 +22,22 @@ adjustment_enabled = true
 adjustment_contrast = 1.05
 adjustment_saturation = 1.05
 
+[sub_resource type="ArrayMesh" id="ArrayMesh_q6gud"]
+_surfaces = [{
+"aabb": AABB(-4, 0, 0, 5, 1.00001, 1),
+"attribute_data": PackedByteArray(0, 0, 0, 62, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 0),
+"format": 4113,
+"index_count": 12,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 0, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 4, 0, 6, 0, 7, 0),
+"primitive": 3,
+"vertex_count": 8,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 192, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 192, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 128, 192, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 192, 0, 0, 128, 63, 0, 0, 0, 0)
+}]
+
 [node name="world" type="Node3D"]
 
 [node name="GridMap" type="GridMap" parent="."]
+visible = false
 mesh_library = ExtResource("1_1mu4v")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_x7kmu")
@@ -36,5 +51,10 @@ shadow_enabled = true
 
 [node name="kira" parent="." instance=ExtResource("4_kj1ay")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("5_3ge45")
+mesh = SubResource("ArrayMesh_q6gud")
+script = ExtResource("5_gntjb")
 
 [connection signal="tree_exiting" from="GridMap" to="GridMap" method="_on_tree_exiting"]

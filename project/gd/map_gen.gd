@@ -7,6 +7,62 @@ var dbg := PerformanceInfo.Time
 enum { Dirt, Grass, Stone, Void_grass, Crystal_blue }
 
 
+func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
+
+
+func get_hash() -> int:
+	var used_cells := get_used_cells()
+	used_cells.sort()
+	return hash(used_cells)
+
+
+func clean() -> float:
+	var start := Time.get_ticks_usec()
+	clear()
+	return (Time.get_ticks_usec() - start) / 1000.0
+
+
+func reset() -> void:
+	if get_hash() != 2170478937:
+		if dbg >= PerformanceInfo.Info:
+			print_debug("Current Gridmap hash is not 2170478937 but ", get_hash(), ".\n\t",
+					"Regenerated with _regenerate_fast().")
+		_regenerate_fast(Vector3i(32, 32, 4))
+	elif dbg >= PerformanceInfo.Info:
+		print_debug("Gridmap hash is 2170478937, not regenerating.")
+
+
+"""
+# To keep performace in check.
+# It should be over 262144 or 64 cubed (64x64x64) blocks per second on i5-9300H.
+# I am targeting generate 64 cubed blocks in 1.5 seconds on i3-6100U,
+# which has 55% performace of i5-9300H.
+_regenerate_fast() stats:
+	Clean up time: 0 ms
+	Regenerating time: 522.36 ms or 501845(79.5x79.5x79.5) blocks/s
+_regenerate_with_array() stats:
+	Clean up time: 54.793 ms
+	Regenerating time: 639.685 ms or 409801(74.3x74.3x74.3) blocks/s
+"""
+func benchmark() -> void:
+	clear()
+
+	var dimension := Vector3i(64, 64, 64)
+#	dimension = Vector3i(32, 32, 4) # default dimension
+
+	_regenerate_fast(dimension)
+	_regenerate_with_array(dimension)
+
+
+func prt_perf_stat(func_name: String, clean_time: float, regenerating_time: float, bps: int) -> void:
+	var bps_cubed = snappedf(cbrt(bps), 0.1)
+	var bps_cb_str = "".join(["(", "x".join([bps_cubed, bps_cubed, bps_cubed]), ")"])
+	
+	print(func_name, " stats:\n\t",
+			"Clean up time: ", clean_time, " ms\n\t",
+			"Regenerating time: ", regenerating_time, " ms or ", bps, bps_cb_str, " blocks/s")
+
+
 func _regenerate_fast(dimension: Vector3i) -> void:
 	var clean_time := clean()
 
@@ -44,64 +100,6 @@ func _regenerate_fast(dimension: Vector3i) -> void:
 		var regenerating_time := (Time.get_ticks_usec() - start) / 1000.0
 		var bps := floori(block_sum / ((Time.get_ticks_usec() - start) / 1_000_000.0))
 		prt_perf_stat("_regenerate_fast()", clean_time, regenerating_time, bps)
-
-
-func reset() -> void:
-	if get_hash() != 2170478937:
-		if dbg >= PerformanceInfo.Info:
-			print_debug("Current Gridmap hash is not 2170478937 but ", get_hash(), ".\n\t",
-					"Regenerated with _regenerate_fast().")
-		_regenerate_fast(Vector3i(32, 32, 4))
-	elif dbg >= PerformanceInfo.Info:
-		print_debug("Gridmap hash is 2170478937, not regenerating.")
-
-
-"""
-# To keep performace in check.
-# It should be over 262144 or 64 cubed (64x64x64) blocks per second on i5-9300H.
-# I am targeting generate 64 cubed blocks in 1.5 seconds on i3-6100U,
-# which has 55% performace of i5-9300H.
-_regenerate_fast() stats:
-	Clean up time: 0.019 ms
-	Regenerating time: 2170.06 ms or 483201(78.5x78.5x78.5) blocks/s
-_regenerate_with_array() stats:
-	Clean up time: 255.129 ms
-	Regenerating time: 2577.446 ms or 406827(74.1x74.1x74.1) blocks/s
-"""
-func benchmark() -> void:
-	clear()
-
-	var dimension := Vector3i(64, 64, 64)
-#	dimension = Vector3i(32, 32, 4) # default dimension
-
-	_regenerate_fast(dimension)
-	_regenerate_with_array(dimension)
-
-
-func get_hash() -> int:
-	var used_cells := get_used_cells()
-	used_cells.sort()
-	return hash(used_cells)
-
-
-func clean() -> float:
-	var start := Time.get_ticks_usec()
-	clear()
-	var end := Time.get_ticks_usec()
-
-	return (end - start) / 1000.0
-
-
-func prt_perf_stat(func_name: String, clean_time: float, regenerating_time: float, bps: int) -> void:
-	var bps_cubed = snappedf(cbrt(bps), 0.1)
-	var bps_cb_str = "".join(["(", "x".join([bps_cubed, bps_cubed, bps_cubed]), ")"])
-	
-	print(func_name, " stats:\n\t",
-			"Clean up time: ", clean_time, " ms\n\t",
-			"Regenerating time: ", regenerating_time, " ms or ", bps, bps_cb_str, " blocks/s")
-
-
-func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
 
 
 func _ready() -> void: # "Scene -> Reload Saved Scene" to see the changes!
