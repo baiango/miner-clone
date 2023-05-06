@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="miner clone"
-run/main_scene="res://main.tscn"
+run/main_scene="res://tabled ans/tabled ans test.tscn"
 config/features=PackedStringArray("4.0")
 config/icon="res://icon.png"
 

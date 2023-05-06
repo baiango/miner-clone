@@ -81,6 +81,8 @@ func _regenerate(dimension: Vector3i) -> void:
 	for x in dimension.x:
 		for y in dimension.y:
 			for z in dimension.z:
+				# The bitwise NOT operator "~" will filp numbers's sign
+				# and then subtracts 1 or plus 1 depending on the sign.
 				set_cell_item(Vector3i(x, ~y, z), blk_id_arr[x][y][z])
 
 
