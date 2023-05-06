@@ -14,5 +14,5 @@ Feature:
 This codebase guideline:
 - Split the project to another independent repository when getting too big.
 - You need to see the codes as your enemy. [Always implement things when you actually need them, never when you just foresee that you will\] need them.](https://en.wikipedia.org/wiki/You_aren't_gonna_need_it)
-- Always assume every functions will be used for multithreading. And write it for multithreading too! If possible.
+- Always assume every functions will be used for multithreading. And write it for multithreading too! If possible. One way to know if you done it right is, look at the function has at least one input and one output. If one of them does not, then it must be OOP(Object-oriented programming) and not functional programming. That mean it's possible not able to run in multithread.
 - Avoid reading global variables, and avoid writing to it as if a plague.
