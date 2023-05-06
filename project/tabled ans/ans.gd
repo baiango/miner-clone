@@ -66,8 +66,6 @@ func _regenerate(dimension: Vector3i) -> void:
 				var val = noi.get_noise_3d(x, y, z)
 				var rnd_deep := rng.randi()
 
-				# since modulo "%" use "a-(a//b)*b" which is slow. I use bitwise AND "&".
-				# bitwise AND "&" only work for numbers that are in power of 2 minus 1. (2**n - 1)
 				var blk_id := -1
 				if val > -0.3:
 					if y >= (rnd_deep & 1) + 5:
@@ -81,8 +79,6 @@ func _regenerate(dimension: Vector3i) -> void:
 	for x in dimension.x:
 		for y in dimension.y:
 			for z in dimension.z:
-				# The bitwise NOT operator "~" will filp numbers's sign
-				# and then subtracts 1 or plus 1 depending on the sign.
 				set_cell_item(Vector3i(x, ~y, z), blk_id_arr[x][y][z])
 
 
@@ -94,6 +90,7 @@ func _regenerate(dimension: Vector3i) -> void:
 
 
 func _ready() -> void: # "Scene -> Reload Saved Scene" to see the changes!
+	return
 	reset()
 
 
