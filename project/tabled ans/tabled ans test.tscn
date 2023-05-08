@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://d1xjvnvdqrcdd"]
+[gd_scene load_steps=11 format=3 uid="uid://d1xjvnvdqrcdd"]
 
 [ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="1_1mu4v"]
 [ext_resource type="Script" path="res://tabled ans/ans.gd" id="2_x7kmu"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c7qc68x2vpdj5" path="res://model/kira/kira.tscn" id="4_kj1ay"]
 [ext_resource type="Material" uid="uid://ch2onppkn6mb1" path="res://model/blocks/res/blocks.material" id="5_3ge45"]
 [ext_resource type="Script" path="res://tabled ans/cull.gd" id="5_gntjb"]
+[ext_resource type="MeshLibrary" uid="uid://c1s64nmn514wr" path="res://tabled ans/res.meshlib" id="7_1smuu"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_tf246"]
 use_debanding = false
@@ -32,6 +33,7 @@ skeleton = NodePath("../..")
 script = ExtResource("5_gntjb")
 
 [node name="GridMap" type="GridMap" parent="."]
+visible = false
 mesh_library = ExtResource("1_1mu4v")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_x7kmu")
@@ -48,7 +50,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(0.996931, 0.000404015, 0.078284, 0, 0.999987, -0.00516082, -0.078285, 0.00514498, 0.996918, 18.0368, -23.1366, 1.53233)
+shadow_enabled = true
 omni_range = 4096.0
+
+[node name="GridMap2" type="GridMap" parent="."]
+visible = false
+mesh_library = ExtResource("7_1smuu")
+cell_size = Vector3(1, 1, 1)
+data = {
+"cells": PackedInt32Array(-1, 1, 786432, -65536, 1, 786432, -65535, 1, 786432, -65534, 1, 786432, -1, 2, 786432, -65536, 2, 786432, -65535, 2, 786432, -65534, 2, 786432)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
 
 [connection signal="tree_exiting" from="chunks/MeshInstance3D" to="chunks/MeshInstance3D" method="_on_tree_exiting"]
 [connection signal="tree_exiting" from="GridMap" to="GridMap" method="_on_tree_exiting"]
