@@ -4,7 +4,7 @@ extends GridMap
 enum PerformanceInfo { None, Time, Info, Verbose }
 var dbg := PerformanceInfo.Time
 
-enum { Dirt, Grass, Stone, Void_grass, Crystal_blue }
+enum { Reset, Air, Dirt, Grass, Stone, Void_grass, Crystal_blue }
 
 
 func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
@@ -66,7 +66,7 @@ func _regenerate(dimension: Vector3i) -> void:
 				var val = noi.get_noise_3d(x, y, z)
 				var rnd_deep := rng.randi()
 
-				var blk_id := -1
+				var blk_id := Air
 				if val > -0.3:
 					if y >= (rnd_deep & 1) + 5:
 						blk_id = Stone
@@ -79,7 +79,10 @@ func _regenerate(dimension: Vector3i) -> void:
 	for x in dimension.x:
 		for y in dimension.y:
 			for z in dimension.z:
-				set_cell_item(Vector3i(x, ~y, z), blk_id_arr[x][y][z])
+				if blk_id_arr[x][y][z] == Reset:
+					clean()
+					break
+				set_cell_item(Vector3i(x, ~y, z), blk_id_arr[x][y][z] - 2)
 
 	if dbg >= PerformanceInfo.Time:
 		var block_sum := dimension.x * dimension.y * dimension.z
@@ -89,7 +92,7 @@ func _regenerate(dimension: Vector3i) -> void:
 
 
 func _ready() -> void: # "Scene -> Reload Saved Scene" to see the changes!
-	return
+#	return
 	reset()
 
 

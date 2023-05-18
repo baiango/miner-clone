@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1spvevbvl2ab"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_hm68n"]
-
-[node name="res" type="Node3D"]
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("QuadMesh_hm68n")
-skeleton = NodePath("../..")

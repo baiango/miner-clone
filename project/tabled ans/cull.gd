@@ -16,15 +16,26 @@ var dbg := PerformanceInfo.Time
 const Air := -1
 enum { Grass, Dirt, Stone, Void_grass, Crystal_blue }
 
-const TOP_FACE    := [Vec3_UP        , Vec3_UP_RIGHT  , Vec3_ONE     , Vec3_UP_BACK ]
-const BOTTOM_FACE := [Vec3_BACK      , Vec3_RIGHT_BACK, Vec3_RIGHT   , Vec3_ZERO    ]
-const LEFT_FACE   := [Vec3_BACK      , Vec3_ZERO      , Vec3_UP      , Vec3_UP_BACK ]
+#const TOP_FACE    := [Vec3_UP        , Vec3_UP_BACK, Vec3_ONE, Vec3_UP_RIGHT ]
+const TOP_FACE    := [Vec3_UP        , Vec3_UP_RIGHT, Vec3_ONE, Vec3_UP_BACK ]
+#const BOTTOM_FACE := [Vec3_BACK      , Vec3_ZERO      , Vec3_RIGHT   , Vec3_RIGHT_BACK] # f
+const BOTTOM_FACE := [Vec3_BACK      , Vec3_RIGHT_BACK      , Vec3_RIGHT   , Vec3_ZERO] # f
+#const LEFT_FACE   := [Vec3_BACK      , Vec3_ZERO      , Vec3_UP      , Vec3_UP_BACK ] # f
+#const LEFT_FACE   := [Vec3_BACK      , Vec3_UP_BACK      , Vec3_UP      , Vec3_ZERO ] # fs
+#const LEFT_FACE   := [    Vec3_UP   ,   Vec3_ZERO   ,   Vec3_BACK   ,   Vec3_UP_BACK] # f
+#const LEFT_FACE   := [   Vec3_ZERO, Vec3_UP, Vec3_UP_BACK,  Vec3_BACK      ] # f
+#const LEFT_FACE   := [Vec3_ZERO,Vec3_UP, Vec3_UP_BACK, Vec3_BACK,           ] # f
+const LEFT_FACE   := [ Vec3_UP_BACK, Vec3_BACK, Vec3_ZERO,Vec3_UP,          ] # f
+
 const RIGHT_FACE  := [Vec3_RIGHT     , Vec3_RIGHT_BACK, Vec3_ONE     , Vec3_UP_RIGHT]
-const FRONT_FACE  := [Vec3_RIGHT_BACK, Vec3_BACK      , Vec3_UP_BACK , Vec3_ONE     ]
+const FRONT_FACE  := [Vec3_RIGHT_BACK, Vec3_ONE       , Vec3_UP_BACK , Vec3_BACK      ] # f
+#const FRONT_FACE  := [Vec3_RIGHT_BACK, Vec3_BACK       , Vec3_UP_BACK , Vec3_ONE      ] # f
 const BACK_FACE   := [Vec3_ZERO      , Vec3_RIGHT     , Vec3_UP_RIGHT, Vec3_UP      ]
 
 
 const FACE_INDEX  := [0, 1, 2, 0, 2, 3]
+# To filp the face
+const FACE_INDEX_FLIPPED  := [3, 2, 0, 2, 1, 0]
 
 const FACE_UV     := [Vector2.ZERO, Vector2.DOWN, Vector2.ONE, Vector2.RIGHT]
 const TEXTURE_ATLAS_TILE_SIZE = Vector2(8,8)
@@ -36,7 +47,7 @@ func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
 func prt_perf_stat(func_name: String, regenerating_time: float, bps: int) -> void:
 	var bps_cubed = snappedf(cbrt(bps), 0.1)
 	var bps_cb_str = "".join(["(", "x".join([bps_cubed, bps_cubed, bps_cubed]), ")"])
-	
+
 	print(func_name, " stats:\n\t",
 			"Regenerating time: ", regenerating_time, " ms or ", bps, bps_cb_str, " blocks/s")
 
@@ -54,7 +65,6 @@ func _add_face_index(MULTIPLIER: int) -> Array:
 		for j in FACE_INDEX.size():
 			result.append(FACE_INDEX[j] + i * VERTICES_SIZE)
 	return result
-
 
 func _get_face_uv(BLOCK_ID: int) -> PackedVector2Array:
 	var row := TEXTURE_ATLAS_TILE_SIZE.x
@@ -95,7 +105,7 @@ _ready() stats:
 # It slowed down by x2.6.
 """
 func _ready() -> void:
-#	return
+	return
 	var start := Time.get_ticks_usec()
 	# Step 1, generate block id.
 	var dimension := Vector3i(32, 32, 32)
@@ -106,8 +116,8 @@ func _ready() -> void:
 	var rng = RandomNumberGenerator.new()
 	rng.set_seed(1023)
 
-	var padding = 1
-	var padded_dimension = dimension + Vector3i.ONE * padding * 2
+	var padding := 1
+	var padded_dimension := dimension + Vector3i.ONE * padding * 2
 	var blk_id_arr := []
 	blk_id_arr.resize(padded_dimension.x)
 	for x in padded_dimension.x:
@@ -169,28 +179,51 @@ func _ready() -> void:
 					face_arr.append_array(_generate_face(Left, x, ~y, z))
 					face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
 					face_count += 1
+					# face_arr.append_array(_generate_face(Right, x-1, ~y, z))
+					# face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
+					# face_count += 1
+
 				if right_block == Air or dbg_do_all_face:
 					face_arr.append_array(_generate_face(Right, x, ~y, z))
 					face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
 					face_count += 1
+					# face_arr.append_array(_generate_face(Left, x+1, ~y, z))
+					# face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
+					# face_count += 1
+
 				if top_block == Air or dbg_do_all_face:
 					face_arr.append_array(_generate_face(Top, x, ~y, z))
 					face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
 					face_count += 1
+					# face_arr.append_array(_generate_face(Bottom, x, ~(y-1), z))
+					# face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
+					# face_count += 1
+
 				if bottom_block == Air or dbg_do_all_face:
 					face_arr.append_array(_generate_face(Bottom, x, ~y, z))
 					face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
 					face_count += 1
+					# face_arr.append_array(_generate_face(Top, x, ~(y+1), z))
+					# face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
+					# face_count += 1
+
 				if back_block == Air or dbg_do_all_face:
 					face_arr.append_array(_generate_face(Back, x, ~y, z))
 					face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
 					face_count += 1
+					# face_arr.append_array(_generate_face(Front, x, ~y, z-1))
+					# face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
+					# face_count += 1
+
 				if front_block == Air or dbg_do_all_face:
 					face_arr.append_array(_generate_face(Front, x, ~y, z))
 					face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
 					face_count += 1
+					# face_arr.append_array(_generate_face(Back, x, ~y, z+1))
+					# face_uv.append_array(_get_face_uv(blk_id_arr[ix][iy][iz]))
+					# face_count += 1
 
-	face_index = _add_face_index(face_count)
+	face_index.append_array(_add_face_index(face_count))
 
 	var mesh_data := []
 	mesh_data.resize(ArrayMesh.ARRAY_MAX)
