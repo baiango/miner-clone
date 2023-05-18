@@ -1,3 +1,3 @@
 extends Node
 
-@onready var BLKS := $/root/world/GridMap
+@onready var BLKS := $/root/world/chunks/GridMap

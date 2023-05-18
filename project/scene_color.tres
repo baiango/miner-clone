@@ -1,0 +1,36 @@
+[gd_resource type="Environment" load_steps=8 format=3 uid="uid://h3yi7pasxa5v"]
+
+[ext_resource type="Texture2D" uid="uid://b1scyuit6ifij" path="res://image/hdri.png" id="1_fic50"]
+
+[sub_resource type="Curve" id="Curve_f80in"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 1.4, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_y4qby"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_dkm1l"]
+_data = [Vector2(0, 0), 0.0, 1.0, 0, 1, Vector2(1, 1), 1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_l86r6"]
+curve_x = SubResource("Curve_f80in")
+curve_y = SubResource("Curve_y4qby")
+curve_z = SubResource("Curve_dkm1l")
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_q47vm"]
+use_debanding = false
+night_sky = ExtResource("1_fic50")
+
+[sub_resource type="Sky" id="Sky_vv57i"]
+sky_material = SubResource("PhysicalSkyMaterial_q47vm")
+
+[resource]
+background_mode = 2
+sky = SubResource("Sky_vv57i")
+tonemap_mode = 1
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.05
+adjustment_color_correction = SubResource("CurveXYZTexture_l86r6")
