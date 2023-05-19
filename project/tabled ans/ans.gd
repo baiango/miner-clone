@@ -291,5 +291,7 @@ func _ready() -> void: # "Scene -> Reload Saved Scene" to see the changes!
 	print_debug(c.rng64(1))
 	print_debug(c.rng64(1))
 
+	print_debug(c.rng_array(5))
+
 func _on_tree_exiting():
 	clear()

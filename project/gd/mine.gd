@@ -13,12 +13,13 @@ func _input(_event):
 @onready var blks := Glob.BLKS as GridMap
 func _on_break_block_timeout():
 	var pos := Vector3i(floor(hit.global_position))
-	if blks.get_cell_item(pos) == GridMap.INVALID_CELL_ITEM:
-		pos.y -= 1
-	if blks.get_cell_item(pos) == GridMap.INVALID_CELL_ITEM:
-		pos.y -= 1
+	pos += Vector3i(0, blks.dimension.y, 0)
 
-	if blks.get_cell_item(pos) != GridMap.INVALID_CELL_ITEM:
+	if blks.get_cell_item(pos) == blks.Air or blks.get_cell_item(pos) == GridMap.INVALID_CELL_ITEM:
+		pos.y -= 1
+	if blks.get_cell_item(pos) == blks.Air or blks.get_cell_item(pos) == GridMap.INVALID_CELL_ITEM:
+		pos.y -= 1
+	if blks.get_cell_item(pos) != blks.Air or blks.get_cell_item(pos) != GridMap.INVALID_CELL_ITEM:
 		blks.destory_block(pos)
 		hit.play()
 	else:
