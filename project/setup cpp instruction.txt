@@ -1,0 +1,25 @@
+1a. Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+2a. irm get.scoop.sh | iex
+If you can't get the file for some reason, see 1b.
+
+1b.	http://get.scoop.sh/ Ctrl+S save this file.
+2b. Alt+Left-click on the file.
+3b. Unlock the file and apply then OK.
+4b. Select the file path and paste "powershell"
+5b. Run .\install.ps1 in the powershell to install.
+
+https://docs.godotengine.org/en/stable/contributing/development/compiling/compiling_for_windows.html
+Read this docs to install the requirements.
+
+1.	Download https://visualstudio.microsoft.com/vs/community/
+2.	In Visual Studio 2019 or newer, select Desktop development with C++ then install.
+Press Windows+R and type "cmd" to open Command Prompt.
+Paste these commends to install the requirements.
+3.	scoop install gcc python scons make mingw
+4.	py -3 -m pip install scons
+
+You can "Edit" to see what's inside the bat(ch) script.
+5.	Now click on "setup-cpp-for-compile.bat" to prepare the Godot dependency.
+6.	Quit the Godot to the Project Manger by pressing Ctrl+Shift+Q to stop Godot from locking the dll.
+7.	Now click on "compile (use me).bat" to compile the game's dll dependency.
+8.	Now run the project. And you're finished.

@@ -5774,7 +5774,7 @@ bones/64/rotation = Quaternion(7.45058e-09, 2.91168e-22, 1.12497e-22, 1)
 bones/64/scale = Vector3(1, 1, 1)
 
 [node name="Flashlight" type="BoneAttachment3D" parent="Kira/Skeleton3D"]
-transform = Transform3D(0.972741, 0.231894, -0.00319445, -0.214263, 0.903916, 0.370192, 0.0887379, -0.35942, 0.928959, -0.194141, 0.80636, 0.0842822)
+transform = Transform3D(0.972741, 0.231894, -0.00319448, -0.214263, 0.903916, 0.370192, 0.0887379, -0.35942, 0.928959, -0.194141, 0.80636, 0.0842822)
 visible = false
 bone_name = "Flashlight"
 bone_idx = 49

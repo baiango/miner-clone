@@ -24,6 +24,12 @@ func clean() -> float:
 
 func reset() -> void:
 	_regenerate(dimension)
+	save(str(blk_id_arr))
+
+
+func save(content: String) -> void:
+	var file = FileAccess.open("user://save_game.dat", FileAccess.WRITE)
+	file.store_string(content)
 
 
 func prt_perf_stat(func_name: String, clean_time: float, regenerating_time: float, bps: int) -> void:
@@ -117,8 +123,6 @@ func _regenerate(dimension: Vector3i) -> void:
 	for ix in range(padding, dimension.x + padding):
 		for iy in range(padding, dimension.y + padding):
 			air_count += blk_id_arr[ix][iy].count(Air)
-	print_debug(air_count)
-	print_debug(32**3)
 
 	# Block cull
 	for ix in range(padding, dimension.x + padding):
@@ -275,7 +279,17 @@ func _init() -> void:
 func _ready() -> void: # "Scene -> Reload Saved Scene" to see the changes!
 #	return
 	reset()
+	var c = Cosmic.new()
 
+	print_debug(c.rng64(32))
+	print_debug(c.rng64(32))
+	print_debug(c.rng64(32))
+	print_debug(c.rng64(32))
+	print_debug(c.rng64())
+	print_debug(c.rng64())
+	print_debug(c.rng64(1))
+	print_debug(c.rng64(1))
+	print_debug(c.rng64(1))
 
 func _on_tree_exiting():
 	clear()
