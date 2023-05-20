@@ -3,7 +3,7 @@ extends GridMap
 
 
 enum PerformanceInfo { None, Time, Info, Verbose }
-var dbg := PerformanceInfo.Time
+var dbg := PerformanceInfo.None
 
 enum { Dirt, Grass, Stone, Void_grass, Crystal_blue, Air=254, Reset=255 }
 
@@ -21,17 +21,20 @@ _regenerate() stats:
 	block_id_time: 14.327 ms
 	set_cell_time: 7.181 ms
 '''
-var dimension := Vector3i(32, 32, 32)
+var dimension := Vector3i(64, 64, 64)
 var row := dimension.x
 var col := dimension.y
 var blk_id_arr := PackedByteArray()
 func _init() -> void:
-	position.y = -col
 	blk_id_arr.resize(row * col * dimension.z)
 
 
 func _ready() -> void:
-	_regenerate()
+#	var thread = Thread.new()
+#	thread.start(Callable(self, "_regenerate"))
+#	thread.wait_to_finish()
+#	_regenerate()
+	pass
 
 
 func _regenerate() -> void:
@@ -50,7 +53,7 @@ func _regenerate() -> void:
 	for x in row:
 		for y in col:
 			for z in dimension.z:
-				var val := noi.get_noise_3d(x, y, z)
+				var val := noi.get_noise_3d(x+position.x, y+position.y, z+position.z)
 				var rnd_deep := rng.randi()
 
 				var blk_id := Air
@@ -66,13 +69,6 @@ func _regenerate() -> void:
 	block_id_time = (Time.get_ticks_usec() - block_id_time) / 1000.0
 
 	var set_cell_time: float = Time.get_ticks_usec()
-	# 9.127 ms
-#	for x in row:
-#		for y in col:
-#			for z in dimension.z:
-#				set_cell_item(Vector3i(x, y, z), blk_id_arr[x + (y*row) + (z*row*col)])
-
-	# Total: 7.181 ms, a 27% boost.
 	# Not edge
 	for x in row:
 		for y in col:
@@ -86,7 +82,6 @@ func _regenerate() -> void:
 				if y+1 < row: set_cell_item(v3 + Vector3.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)])
 				if z+1 < row: set_cell_item(v3 + Vector3.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
 
-#	# chatGPT assisted.
 #	# Edge
 	for i in row:
 		for j in col:
@@ -108,6 +103,7 @@ func _regenerate() -> void:
 # Non-important function are spaced 1 newline instead of 2.
 func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
 
+# Can't handle multi chunks. Only the first chunk will work.
 func destory_block(x: int, y: int, z: int) -> void:
 	blk_id_arr[x + (y*row) + (z*row*col)] = Air
 	set_cell_item(Vector3i(x, y, z), Air)
@@ -124,6 +120,7 @@ func clean() -> float:
 	clear()
 	return (Time.get_ticks_usec() - start) / 1000.0
 
+# Too awesome for multithreading to handle. So it mangles together.
 func prt_perf_stat(func_name: String, clean_time: float, regenerating_time: float, bps: int, block_id_time: float, set_cell_time: float) -> void:
 	var bps_cubed = snappedf(cbrt(bps), 0.1)
 	var bps_cb_str = "".join(["(", "x".join([bps_cubed, bps_cubed, bps_cubed]), ")"])

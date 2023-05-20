@@ -10,7 +10,7 @@ func _input(_event):
 
 @onready var hit := $"../Skeleton3D/pipe/pipe/hit"
 @onready var hit_miss := $"../Skeleton3D/pipe/pipe/hit/hit_miss"
-@onready var blks := Glob.BLKS as GridMap
+@onready var blks := get_node(Glob.BLKS) as GridMap
 func _on_break_block_timeout():
 	var pos := Vector3i(floor(hit.global_position))
 	pos += Vector3i(0, blks.dimension.y, 0)

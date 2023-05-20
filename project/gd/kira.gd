@@ -28,7 +28,7 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("ctrl + f4"):
 		position = Vector3.BACK
-		Glob.BLKS.reset()
+		get_node(Glob.BLKS).reset()
 		$reset.play()
 
 
@@ -39,7 +39,7 @@ func _physics_process(delta):
 	var input := Vector2(Input.get_axis("w","s"), Input.get_axis("a","d"))
 
 	velocity += (h.transform.basis.z * input.x +
-				h.transform.basis.x * input.y) * delta * 5
+				h.transform.basis.x * input.y) * delta * 5 * 100
 	velocity.y -= 9.8 * delta
 
 	if Input.is_action_just_pressed(" ") and is_on_floor():

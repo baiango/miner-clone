@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwfucwvjgo1bx"]
+
+[ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="1_2cspw"]
+[ext_resource type="Script" path="res://tabled ans/chunk.gd" id="2_xegk7"]
+
+[node name="GridMap" type="GridMap"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -64, 0)
+mesh_library = ExtResource("1_2cspw")
+cell_size = Vector3(1, 1, 1)
+script = ExtResource("2_xegk7")
+metadata/_editor_floor_ = Vector3(0, -4, 0)
+
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]

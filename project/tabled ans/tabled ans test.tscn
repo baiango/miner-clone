@@ -1,35 +1,30 @@
-[gd_scene load_steps=5 format=3 uid="uid://djpd301mly1mq"]
+[gd_scene load_steps=4 format=3 uid="uid://djpd301mly1mq"]
 
-[ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="1_1mu4v"]
-[ext_resource type="Script" path="res://tabled ans/chunk.gd" id="2_m4x4q"]
+[ext_resource type="Script" path="res://tabled ans/chunks_mgr.gd" id="1_45na5"]
 [ext_resource type="Environment" uid="uid://h3yi7pasxa5v" path="res://scene_color.tres" id="3_6n8q3"]
 [ext_resource type="PackedScene" uid="uid://c7qc68x2vpdj5" path="res://model/kira/kira.tscn" id="4_kj1ay"]
 
 [node name="world" type="Node3D"]
 
 [node name="chunks" type="Node3D" parent="."]
+script = ExtResource("1_45na5")
 
-[node name="OmniLight3D" type="OmniLight3D" parent="chunks"]
+[node name="lights" type="Node3D" parent="."]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="lights"]
 transform = Transform3D(0.996931, 0.000404015, 0.078284, 0, 0.999987, -0.00516082, -0.078285, 0.00514498, 0.996918, 16.4811, -8.99568, 6.18811)
 shadow_enabled = true
 omni_range = 4096.0
 
-[node name="OmniLight3D2" type="OmniLight3D" parent="chunks"]
+[node name="OmniLight3D2" type="OmniLight3D" parent="lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.17605, -7.82848, 24.4049)
 shadow_enabled = true
 omni_range = 4096.0
 
-[node name="OmniLight3D3" type="OmniLight3D" parent="chunks"]
+[node name="OmniLight3D3" type="OmniLight3D" parent="lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6058, -29.7963, 2.33475)
 shadow_enabled = true
 omni_range = 4096.0
-
-[node name="GridMap" type="GridMap" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -32, 0)
-mesh_library = ExtResource("1_1mu4v")
-cell_size = Vector3(1, 1, 1)
-script = ExtResource("2_m4x4q")
-metadata/_editor_floor_ = Vector3(0, -4, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_6n8q3")
@@ -41,4 +36,7 @@ shadow_enabled = true
 [node name="kira" parent="." instance=ExtResource("4_kj1ay")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
 
-[connection signal="tree_exiting" from="chunks/GridMap" to="chunks/GridMap" method="_on_tree_exiting"]
+[connection signal="tree_exiting" from="chunks/GridMap" to="chunks/GridMap" method="_on_tree_exiting" flags=18]
+[connection signal="tree_exiting" from="chunks/@GridMap@18982" to="chunks/@GridMap@18982" method="_on_tree_exiting" flags=18]
+[connection signal="tree_exiting" from="chunks/@GridMap@18983" to="chunks/@GridMap@18983" method="_on_tree_exiting" flags=18]
+[connection signal="tree_exiting" from="chunks/@GridMap@18984" to="chunks/@GridMap@18984" method="_on_tree_exiting" flags=18]
