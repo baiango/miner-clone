@@ -20,7 +20,7 @@ func _on_break_block_timeout():
 	if blks.get_cell_item(pos) == blks.Air or blks.get_cell_item(pos) == GridMap.INVALID_CELL_ITEM:
 		pos.y -= 1
 	if blks.get_cell_item(pos) != blks.Air or blks.get_cell_item(pos) != GridMap.INVALID_CELL_ITEM:
-		blks.destory_block(pos)
+		blks.destory_block(pos.x, pos.y, pos.z)
 		hit.play()
 	else:
 		hit_miss.play()
