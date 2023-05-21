@@ -1,0 +1,107 @@
+[gd_scene load_steps=17 format=3 uid="uid://5vkm0h771eem"]
+
+[ext_resource type="PackedScene" uid="uid://bdfpkyc4jbqcj" path="res://mycosmos/maps/map1.gltf" id="1_ke04g"]
+[ext_resource type="Script" path="res://mycosmos/map1.gd" id="2_o1ud0"]
+[ext_resource type="Texture2D" uid="uid://jipjv15xpe8q" path="res://mycosmos/debug/Page Screenshot 11.png" id="3_lxjgt"]
+[ext_resource type="Texture2D" uid="uid://cqhl5nqgkr2sa" path="res://mycosmos/debug/Page Screenshot 43.png" id="4_yv0es"]
+[ext_resource type="Texture2D" uid="uid://dsf0itogpomt8" path="res://mycosmos/debug/Middle 11.png" id="5_8lxw8"]
+[ext_resource type="Texture2D" uid="uid://dohfet5nf36yo" path="res://mycosmos/debug/Page Screenshot 169.png" id="5_pg8wg"]
+[ext_resource type="Texture2D" uid="uid://ck5orjeqlhtt1" path="res://mycosmos/debug/Middle 169.png" id="6_egku2"]
+[ext_resource type="Texture2D" uid="uid://bjcu4p18cog23" path="res://mycosmos/debug/Middle 43.png" id="6_fv513"]
+[ext_resource type="Texture2D" uid="uid://bjnlyafn8dy26" path="res://mycosmos/debug/The Rule of Thirds 11.png" id="7_5ivhn"]
+[ext_resource type="Texture2D" uid="uid://bfl4bf7alph1g" path="res://mycosmos/debug/The Rule of Thirds 169.png" id="8_p8egt"]
+[ext_resource type="Texture2D" uid="uid://bnmuvby13d4mr" path="res://mycosmos/debug/The Rule of Thirds 43.png" id="9_dwgif"]
+[ext_resource type="PackedScene" uid="uid://q6mh7ki1stwk" path="res://model/kira/kira.tscn" id="12_t84lq"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0lut0"]
+size = Vector3(1, 1, 3)
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_gidn0"]
+
+[sub_resource type="Sky" id="Sky_i3ywg"]
+sky_material = SubResource("ProceduralSkyMaterial_gidn0")
+
+[sub_resource type="Environment" id="Environment_1m5it"]
+background_mode = 2
+sky = SubResource("Sky_i3ywg")
+tonemap_mode = 1
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_cascades = 5
+sdfgi_y_scale = 0
+sdfgi_energy = 2.0
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.05
+
+[node name="main" type="Node3D"]
+metadata/_edit_lock_ = true
+
+[node name="map1" parent="." instance=ExtResource("1_ke04g")]
+script = ExtResource("2_o1ud0")
+
+[node name="rm_mesh1" type="Area3D" parent="map1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5, 0.5, 18.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="map1/rm_mesh1"]
+shape = SubResource("BoxShape3D_0lut0")
+
+[node name="mesh1_lm" type="OmniLight3D" parent="map1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
+light_size = 0.1
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1m5it")
+
+[node name="kira" parent="." instance=ExtResource("12_t84lq")]
+metadata/_edit_lock_ = true
+
+[node name="debug" type="Node2D" parent="."]
+
+[node name="PageScreenshot11" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("3_lxjgt")
+
+[node name="PageScreenshot43" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("4_yv0es")
+
+[node name="PageScreenshot169" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("5_pg8wg")
+
+[node name="Middle11" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("5_8lxw8")
+
+[node name="Middle43" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("6_fv513")
+
+[node name="Middle169" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("6_egku2")
+
+[node name="TheRuleOfThirds11" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("7_5ivhn")
+
+[node name="TheRuleOfThirds43" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("9_dwgif")
+
+[node name="TheRuleOfThirds169" type="Sprite2D" parent="debug"]
+visible = false
+position = Vector2(640, 360)
+texture = ExtResource("8_p8egt")
+
+[connection signal="body_exited" from="map1/rm_mesh1" to="map1" method="_on_rm_mesh_1_body_exited"]

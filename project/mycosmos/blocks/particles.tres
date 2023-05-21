@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dlfb6wdou2x7a"]
+
+[resource]
+resource_name = "particles"
+shading_mode = 0
+vertex_color_use_as_albedo = true

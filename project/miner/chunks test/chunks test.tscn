@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://u6m3hjtitipg"]
+
+[ext_resource type="Script" path="res://miner/chunks test/threads_mgr.gd" id="1_fj0wt"]
+[ext_resource type="Script" path="res://miner/chunks test/chunks_mgr.gd" id="1_vg0un"]
+[ext_resource type="Environment" uid="uid://c2tmd7d8xi285" path="res://miner/scene_color.tres" id="2_covvo"]
+[ext_resource type="PackedScene" uid="uid://q6mh7ki1stwk" path="res://model/kira/kira.tscn" id="3_rfy8t"]
+
+[node name="world" type="Node3D"]
+
+[node name="threads_mgr" type="Node3D" parent="."]
+script = ExtResource("1_fj0wt")
+
+[node name="chunks_mgr" type="Node3D" parent="threads_mgr"]
+script = ExtResource("1_vg0un")
+
+[node name="lights" type="Node3D" parent="."]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="lights"]
+transform = Transform3D(0.996931, 0.000404015, 0.078284, 0, 0.999987, -0.00516082, -0.078285, 0.00514498, 0.996918, 16.4811, -8.99568, 6.18811)
+shadow_enabled = true
+omni_range = 4096.0
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.17605, -7.82848, 24.4049)
+shadow_enabled = true
+omni_range = 4096.0
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6058, -29.7963, 2.33475)
+shadow_enabled = true
+omni_range = 4096.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_covvo")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, -0.504287, 0.863536, 0, -0.863536, -0.504287, 0, 2, 0)
+shadow_enabled = true
+
+[node name="kira" parent="." instance=ExtResource("3_rfy8t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)

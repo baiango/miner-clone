@@ -5,8 +5,7 @@ using namespace godot;
 
 void Cosmic::_bind_methods()
 {	ClassDB::bind_method(D_METHOD("rng64", "bit_size"), &Cosmic::rng64, DEFVAL(64));
-	ClassDB::bind_method(D_METHOD("rng_array", "size", "bit_size"), &Cosmic::rng_array, DEFVAL(nullptr), DEFVAL(64));
-	ClassDB::bind_method(D_METHOD("arr3d", "x", "y", "z"), &Cosmic::arr3d); }
+	ClassDB::bind_method(D_METHOD("rng_array", "size", "bit_size"), &Cosmic::rng_array, DEFVAL(nullptr), DEFVAL(64)); }
 
 Cosmic::Cosmic()
 {	rng_seed = 1023; }

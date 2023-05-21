@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cb16nqt5dfa0a"]
+
+[ext_resource type="Script" path="res://miner/gd/glob.gd" id="1_ouubh"]
+
+[node name="glob" type="Node"]
+script = ExtResource("1_ouubh")
