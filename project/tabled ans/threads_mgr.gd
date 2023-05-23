@@ -4,8 +4,8 @@ extends Node3D
 func _process(delta: float) -> void:
 	var dimension := Glob.dimension
 	var radius := dimension / 2
-	var pos := $"../kira/Kira".get_position() as Vector3
-	pos = floor(pos / 32)
+	var pos := (Glob.KIRA as Kira).get_position()
+	pos = (pos / 32).floor()
 	var chk_pos2 := PackedVector3Array()
 	var vertical_chunk := 4
 	var horizontal_chunk := 4

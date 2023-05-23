@@ -3,7 +3,7 @@
 [ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="1_1mu4v"]
 [ext_resource type="Script" path="res://tabled ans/chunk.gd" id="2_m4x4q"]
 [ext_resource type="Environment" uid="uid://c5gyx8wtph1ts" path="res://scene_color.tres" id="3_6n8q3"]
-[ext_resource type="PackedScene" path="res://model/kira/kira.tscn" id="4_kj1ay"]
+[ext_resource type="PackedScene" uid="uid://c57yv34qdd03m" path="res://model/kira/kira.tscn" id="4_kj1ay"]
 [ext_resource type="Script" path="res://tabled ans/threads_mgr.gd" id="5_invfk"]
 
 [node name="world" type="Node3D"]

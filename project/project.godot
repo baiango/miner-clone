@@ -19,6 +19,14 @@ config/icon="res://icon.png"
 
 Glob="*res://glob.tscn"
 
+[debug]
+
+gdscript/warnings/return_value_discarded=1
+gdscript/warnings/unsafe_property_access=2
+gdscript/warnings/unsafe_method_access=2
+gdscript/warnings/unsafe_cast=2
+gdscript/warnings/unsafe_call_argument=2
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true

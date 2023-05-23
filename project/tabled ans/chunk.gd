@@ -23,6 +23,7 @@ func _ready() -> void:
 	_regenerate()
 
 
+@warning_ignore("narrowing_conversion")
 func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position.z)) -> void:
 	var clean_time := clean()
 	var start: float = Time.get_ticks_usec()
@@ -107,7 +108,15 @@ func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position
 # Non-important function are spaced 1 newline instead of 2.
 func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
 
+func minimum(nums: PackedInt64Array) -> int:
+	var ret := 2 ** 63 - 1
+	for n in nums: ret = mini(ret, n)
+	return ret
+
 func destory_block(x: int, y: int, z: int) -> void:
+	# Fixed the bug!
+	if minimum([x, y, z]) < 0: return
+	if x > row or y > col or z > cll: return
 	blk_id_arr[x + (y*row) + (z*row*col)] = Air
 	set_cell_item(Vector3i(x, y, z), Air)
 
@@ -115,8 +124,8 @@ func destory_block(x: int, y: int, z: int) -> void:
 	if y-1 > 0: set_cell_item(Vector3i(x, y, z) + Vector3i.DOWN,    blk_id_arr[x   + ((y-1)*row) + (z*row*col)])
 	if z-1 > 0: set_cell_item(Vector3i(x, y, z) + Vector3i.FORWARD, blk_id_arr[x   + (y*row)     + ((z-1)*row*col)])
 	if x+1 < row: set_cell_item(Vector3i(x, y, z) + Vector3i.RIGHT, blk_id_arr[x+1 + (y*row)     + (z*row*col)])
-	if y+1 < row: set_cell_item(Vector3i(x, y, z) + Vector3i.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)])
-	if z+1 < row: set_cell_item(Vector3i(x, y, z) + Vector3i.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
+	if y+1 < col: set_cell_item(Vector3i(x, y, z) + Vector3i.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)])
+	if z+1 < cll: set_cell_item(Vector3i(x, y, z) + Vector3i.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
 
 func clean() -> float:
 	var start: float = Time.get_ticks_usec()
@@ -136,5 +145,5 @@ func prt_perf_stat(func_name: String, clean_time: float, regenerating_time: floa
 func reset() -> void:
 	_regenerate()
 
-func _on_tree_exiting():
+func _on_tree_exiting() -> void:
 	clear()
