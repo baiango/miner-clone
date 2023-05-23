@@ -30,7 +30,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -128, 0)
 mesh_library = ExtResource("1_1mu4v")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_m4x4q")
-metadata/_editor_floor_ = Vector3(0, -5, 0)
+metadata/_editor_floor_ = Vector3(0, 1, 0)
+
+[node name="Chunk" type="GridMap" parent="chunks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -128, -32)
+mesh_library = ExtResource("1_1mu4v")
+cell_size = Vector3(1, 1, 1)
+script = ExtResource("2_m4x4q")
+metadata/_editor_floor_ = Vector3(0, 8, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_6n8q3")
@@ -45,3 +52,4 @@ script = ExtResource("5_invfk")
 [node name="kira" parent="." instance=ExtResource("4_kj1ay")]
 
 [connection signal="tree_exiting" from="chunks/GridMap" to="chunks/GridMap" method="_on_tree_exiting"]
+[connection signal="tree_exiting" from="chunks/Chunk" to="chunks/Chunk" method="_on_tree_exiting"]
