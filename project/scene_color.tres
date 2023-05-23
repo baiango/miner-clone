@@ -1,4 +1,4 @@
-[gd_resource type="Environment" load_steps=8 format=3 uid="uid://h3yi7pasxa5v"]
+[gd_resource type="Environment" load_steps=8 format=3 uid="uid://c5gyx8wtph1ts"]
 
 [ext_resource type="Texture2D" uid="uid://b1scyuit6ifij" path="res://image/hdri.png" id="1_fic50"]
 
@@ -19,12 +19,11 @@ curve_x = SubResource("Curve_f80in")
 curve_y = SubResource("Curve_y4qby")
 curve_z = SubResource("Curve_dkm1l")
 
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_q47vm"]
-use_debanding = false
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_1jxrl"]
 night_sky = ExtResource("1_fic50")
 
 [sub_resource type="Sky" id="Sky_vv57i"]
-sky_material = SubResource("PhysicalSkyMaterial_q47vm")
+sky_material = SubResource("PhysicalSkyMaterial_1jxrl")
 
 [resource]
 background_mode = 2

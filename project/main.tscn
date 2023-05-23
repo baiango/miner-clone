@@ -1,8 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://ca06enatbvcei"]
+[gd_scene load_steps=7 format=3 uid="uid://ku4mcdbfumk4"]
 
-[ext_resource type="PackedScene" uid="uid://c7qc68x2vpdj5" path="res://model/kira/kira.tscn" id="1_t35oq"]
+[ext_resource type="PackedScene" path="res://model/kira/kira.tscn" id="1_t35oq"]
 [ext_resource type="ArrayMesh" uid="uid://dqy0cfh26sual" path="res://model/tree/tree_Cube001.res" id="2_dbwnn"]
-[ext_resource type="Environment" uid="uid://h3yi7pasxa5v" path="res://scene_color.tres" id="3_nowpc"]
+[ext_resource type="Environment" uid="uid://c5gyx8wtph1ts" path="res://scene_color.tres" id="3_nowpc"]
 [ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="4_42coi"]
 [ext_resource type="Script" path="res://gd/map_gen.gd" id="5_kmscg"]
 

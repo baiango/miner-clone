@@ -1,19 +1,19 @@
-[gd_scene load_steps=41 format=3 uid="uid://c7qc68x2vpdj5"]
+[gd_scene load_steps=41 format=3]
 
 [ext_resource type="ArrayMesh" uid="uid://cmbd8glvvdij7" path="res://model/kira/import/kira_kira body.res" id="1_hno4j"]
 [ext_resource type="ArrayMesh" uid="uid://cgyldmgpn2jof" path="res://model/kira/import/kira_Flashlight.res" id="1_kouu1"]
 [ext_resource type="Script" path="res://gd/kira.gd" id="1_rj8tn"]
 [ext_resource type="Script" path="res://gd/mine.gd" id="2_ypnxy"]
-[ext_resource type="AudioStream" uid="uid://srdf1mglm6j" path="res://sounds/mining_1.wav" id="4_fhqx6"]
-[ext_resource type="AudioStream" uid="uid://cltb7u0aofxj3" path="res://sounds/mining_2.wav" id="5_ii3nv"]
-[ext_resource type="AudioStream" uid="uid://ekjo1getv5dv" path="res://sounds/footstep_1.wav" id="5_k6pbt"]
-[ext_resource type="AudioStream" uid="uid://bmabk1xd04hta" path="res://sounds/mining_3.wav" id="6_58sy8"]
-[ext_resource type="AudioStream" uid="uid://cc1amgg4rpa8n" path="res://sounds/footstep_2.wav" id="6_vi622"]
-[ext_resource type="AudioStream" uid="uid://bq14mc1fpys5c" path="res://sounds/mining_missed_1.wav" id="7_12al0"]
-[ext_resource type="AudioStream" uid="uid://dept7gdyvoaar" path="res://sounds/footstep_3.wav" id="7_scfgg"]
-[ext_resource type="AudioStream" uid="uid://b8owmrewmiroe" path="res://sounds/footstep_4.wav" id="8_uax0j"]
-[ext_resource type="AudioStream" uid="uid://bytr71w6fu863" path="res://sounds/teleport.wav" id="12_md2xs"]
-[ext_resource type="AudioStream" uid="uid://cij6h4clssmu4" path="res://sounds/jump_1.wav" id="13_64yy2"]
+[ext_resource type="AudioStream" uid="uid://clqphutq2c6ik" path="res://sounds/mining_1.wav" id="4_fhqx6"]
+[ext_resource type="AudioStream" uid="uid://dx8p1hfdbkh7c" path="res://sounds/mining_2.wav" id="5_ii3nv"]
+[ext_resource type="AudioStream" uid="uid://gefqb7b6kyht" path="res://sounds/footstep_1.wav" id="5_k6pbt"]
+[ext_resource type="AudioStream" uid="uid://cnr74rk8xw3ln" path="res://sounds/mining_3.wav" id="6_58sy8"]
+[ext_resource type="AudioStream" uid="uid://67lt50iulhqx" path="res://sounds/footstep_2.wav" id="6_vi622"]
+[ext_resource type="AudioStream" uid="uid://c2rhi5hnd15p8" path="res://sounds/mining_missed_1.wav" id="7_12al0"]
+[ext_resource type="AudioStream" uid="uid://cx031ublu0130" path="res://sounds/footstep_3.wav" id="7_scfgg"]
+[ext_resource type="AudioStream" uid="uid://cyyyu56sgn7wp" path="res://sounds/footstep_4.wav" id="8_uax0j"]
+[ext_resource type="AudioStream" uid="uid://daxus476nsewh" path="res://sounds/teleport.wav" id="12_md2xs"]
+[ext_resource type="AudioStream" uid="uid://boghwv6261b6w" path="res://sounds/jump_1.wav" id="13_64yy2"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_ppuab"]
 size = Vector3(1.001, 1.001, 1.001)
@@ -5329,7 +5329,7 @@ bones/1/parent = 0
 bones/1/rest = Transform3D(1, 2.35838e-09, -2.42288e-09, -2.42288e-09, 0.999636, -0.0269767, 2.35838e-09, 0.0269767, 0.999636, 1.34358e-09, 0.0579734, 0.0153687)
 bones/1/enabled = true
 bones/1/position = Vector3(1.34358e-09, 0.0579734, 0.0153687)
-bones/1/rotation = Quaternion(0.0143537, 4.53106e-06, 7.8612e-07, 0.999897)
+bones/1/rotation = Quaternion(0.0154999, 4.53106e-06, 7.86122e-07, 0.99988)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/name = "Chest"
 bones/2/parent = 1
@@ -5679,7 +5679,7 @@ bones/51/parent = 0
 bones/51/rest = Transform3D(1, -3.90119e-08, -3.79797e-08, -3.7979e-08, -0.99964, 0.0268268, -3.90126e-08, -0.0268267, -0.99964, 0.0688542, -0.0285541, 0.000131469)
 bones/51/enabled = true
 bones/51/position = Vector3(0.0688542, -0.0285541, 0.000131469)
-bones/51/rotation = Quaternion(0.999911, 0.000561726, -0.000299638, -0.0133607)
+bones/51/rotation = Quaternion(0.999911, 0.00106455, -0.000567832, -0.0133125)
 bones/51/scale = Vector3(1.00004, 1.0001, 0.999891)
 bones/52/name = "J_Sec_L_SkirtBack_01"
 bones/52/parent = 51
@@ -5763,7 +5763,7 @@ bones/63/parent = 62
 bones/63/rest = Transform3D(1, 3.53764e-15, -9.46435e-16, -8.88176e-16, 0.485022, 0.874502, 3.55272e-15, -0.874502, 0.485022, -2.22045e-16, 0.430382, 1.86264e-09)
 bones/63/enabled = true
 bones/63/position = Vector3(-2.22045e-16, 0.430382, 1.86264e-09)
-bones/63/rotation = Quaternion(-0.505173, 0.0838794, 0.0433525, 0.857838)
+bones/63/rotation = Quaternion(-0.505318, 0.0811483, 0.0419407, 0.858085)
 bones/63/scale = Vector3(1, 1.00002, 0.999965)
 bones/64/name = "Right toe"
 bones/64/parent = 63
@@ -5774,7 +5774,7 @@ bones/64/rotation = Quaternion(7.45058e-09, 2.91168e-22, 1.12497e-22, 1)
 bones/64/scale = Vector3(1, 1, 1)
 
 [node name="Flashlight" type="BoneAttachment3D" parent="Kira/Skeleton3D"]
-transform = Transform3D(0.972741, 0.231894, -0.00319447, -0.213963, 0.9027, 0.373319, 0.089459, -0.362463, 0.927707, -0.194141, 0.806593, 0.0848746)
+transform = Transform3D(0.972741, 0.231894, -0.00319445, -0.214168, 0.903529, 0.371191, 0.0889683, -0.360392, 0.92856, -0.194141, 0.806434, 0.0844714)
 visible = false
 bone_name = "Flashlight"
 bone_idx = 49
@@ -5784,7 +5784,7 @@ mesh = ExtResource("1_kouu1")
 skeleton = NodePath("")
 
 [node name="pipe" type="BoneAttachment3D" parent="Kira/Skeleton3D"]
-transform = Transform3D(0.776972, -0.0612651, -0.626549, -0.56582, 0.368357, -0.737686, 0.275999, 0.927672, 0.25154, -0.188909, 0.941389, 0.290798)
+transform = Transform3D(0.776972, -0.0612651, -0.626549, -0.566451, 0.36623, -0.738261, 0.274701, 0.928514, 0.249848, -0.188909, 0.940758, 0.290703)
 bone_name = "pipe"
 bone_idx = 50
 

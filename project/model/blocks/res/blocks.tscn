@@ -1,6 +1,7 @@
-[gd_scene load_steps=18 format=3 uid="uid://c74mr81umlg48"]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Texture2D" uid="uid://24daq3yiduqs" path="res://model/blocks/res/blocks_grass tilemap.png" id="1_xjvho"]
+
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_58lug"]
 resource_name = "Material"

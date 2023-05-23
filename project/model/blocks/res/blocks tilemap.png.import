@@ -2,21 +2,20 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dy4rg7ehmr8y"
-path.s3tc="res://.godot/imported/tree_color palette.png-ff737b969c7cda6380bf041890e4513f.s3tc.ctex"
+uid="uid://24daq3yiduqs"
+path="res://.godot/imported/blocks tilemap.png-e31947f1a2706d61014137a2a76ad202.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
-source_file="res://model/tree/tree_color palette.png"
-dest_files=["res://.godot/imported/tree_color palette.png-ff737b969c7cda6380bf041890e4513f.s3tc.ctex"]
+source_file="res://model/blocks/res/blocks tilemap.png"
+dest_files=["res://.godot/imported/blocks tilemap.png-e31947f1a2706d61014137a2a76ad202.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=3
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
