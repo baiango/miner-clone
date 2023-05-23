@@ -39,7 +39,7 @@ func _physics_process(delta):
 	var input := Vector2(Input.get_axis("w","s"), Input.get_axis("a","d"))
 
 	velocity += (h.transform.basis.z * input.x +
-				h.transform.basis.x * input.y) * delta * 5
+				h.transform.basis.x * input.y) * delta * 5 * 10
 	velocity.y -= 9.8 * delta
 
 	if Input.is_action_just_pressed(" ") and is_on_floor():

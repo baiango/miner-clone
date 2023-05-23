@@ -1,60 +1,52 @@
 @tool
-extends GridMap
-
+class_name Chunk extends GridMap
 
 enum PerformanceInfo { None, Time, Info, Verbose }
 var dbg := PerformanceInfo.Time
 
 enum { Dirt, Grass, Stone, Void_grass, Crystal_blue, Air=254, Reset=255 }
 
-'''
-Previous commit:
-_regenerate() stats:
-	Clean up time: 1.968 ms
-	Regenerating time: 23.776 ms or 1378196(111.3x111.3x111.3) blocks/s
-	block_id_time: 14.254 ms
-	set_cell_time: 9.355 ms
-New: Improved by 9.8% blocks/s. set_cell_time improved by 30%.
-_regenerate() stats:
-	Clean up time: 0.425 ms
-	Regenerating time: 21.653 ms or 1513323(114.8x114.8x114.8) blocks/s
-	block_id_time: 14.327 ms
-	set_cell_time: 7.181 ms
-'''
-var dimension := Vector3i(32, 32, 32)
+var body = RID()
+
+
+var dimension := Vector3i(64, 128, 64)
 var row := dimension.x
 var col := dimension.y
+var cll := dimension.z # cells
 var blk_id_arr := PackedByteArray()
 func _init() -> void:
 	position.y = -col
-	blk_id_arr.resize(row * col * dimension.z)
+	blk_id_arr.resize(row * col * cll)
+	print_debug([row, col, cll])
+	print_debug(row * col * cll)
+	print_debug(len(blk_id_arr))
 
 
 func _ready() -> void:
 	_regenerate()
 
 
-func _regenerate() -> void:
+func _regenerate(pos: Vector3i = Vector3i.ZERO) -> void:
 	var clean_time := clean()
 	var start: float = Time.get_ticks_usec()
 
 	var noi := FastNoiseLite.new()
+	noi.set_offset(pos)
 	noi.set_frequency(0.03)
 
 	var rng := RandomNumberGenerator.new()
 	rng.set_seed(1023)
 
-	var cosmic := Cosmic.new()
-
 	var block_id_time: float = Time.get_ticks_usec()
 	for x in row:
 		for y in col:
-			for z in dimension.z:
+			for z in cll:
 				var val := noi.get_noise_3d(x, y, z)
 				var rnd_deep := rng.randi()
+				var density := -0.5 + (pos.y + y / 200.0)
 
 				var blk_id := Air
-				if val > -0.3:
+				if val > density:
 					if y > col - 3:
 						blk_id = Grass
 					elif y > (rnd_deep & 1) + col - 7:
@@ -66,41 +58,93 @@ func _regenerate() -> void:
 	block_id_time = (Time.get_ticks_usec() - block_id_time) / 1000.0
 
 	var set_cell_time: float = Time.get_ticks_usec()
-	# 9.127 ms
+
 #	for x in row:
 #		for y in col:
-#			for z in dimension.z:
-#				set_cell_item(Vector3i(x, y, z), blk_id_arr[x + (y*row) + (z*row*col)])
+#			for z in cll:
+#				set_cell_item(Vector3(x, y, z), blk_id_arr[x + (y*row) + (z*row*col)])
 
 	# Total: 7.181 ms, a 27% boost.
 	# Not edge
 	for x in row:
 		for y in col:
-			for z in dimension.z:
+			for z in cll:
 				if blk_id_arr[x + (y*row) + (z*row*col)] != Air: continue
 				var v3 := Vector3(x, y, z)
 				if x-1 > 0: set_cell_item(v3 + Vector3.LEFT,    blk_id_arr[x-1 + (y*row)     + (z*row*col)])
 				if y-1 > 0: set_cell_item(v3 + Vector3.DOWN,    blk_id_arr[x   + ((y-1)*row) + (z*row*col)])
 				if z-1 > 0: set_cell_item(v3 + Vector3.FORWARD, blk_id_arr[x   + (y*row)     + ((z-1)*row*col)])
 				if x+1 < row: set_cell_item(v3 + Vector3.RIGHT, blk_id_arr[x+1 + (y*row)     + (z*row*col)])
-				if y+1 < row: set_cell_item(v3 + Vector3.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)])
-				if z+1 < row: set_cell_item(v3 + Vector3.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
+				if y+1 < col: set_cell_item(v3 + Vector3.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)]) # does this cause the top block not showing? fixed it by using col instead of row
+				if z+1 < cll: set_cell_item(v3 + Vector3.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
 
-#	# chatGPT assisted.
-#	# Edge
+
+	# Edge
 	for i in row:
-		for j in col:
-			set_cell_item(Vector3(0      , i      , j)              , blk_id_arr[          (i*row)       + (j*row*col)])
-			set_cell_item(Vector3(row - 1, i      , j)              , blk_id_arr[row - 1 + (i*row)       + (j*row*col)])
-			set_cell_item(Vector3(i      , 0      , j)              , blk_id_arr[i                       + (j*row*col)])
-			set_cell_item(Vector3(i      , col - 1, j)              , blk_id_arr[i       + ((col-1)*row) + (j*row*col)])
-			set_cell_item(Vector3(i      , j      , 0)              , blk_id_arr[i       + (j*row)                    ])
-			set_cell_item(Vector3(i      , j      , dimension.z - 1), blk_id_arr[i       + (j*row)       + ((dimension.z - 1)*row*col)])
+		for j in cll:
+			# set_cell_item(Vector3(0      , i      , j)              , blk_id_arr[          (i*row)       + (j*row*col)])
+			# set_cell_item(Vector3(row - 1, i      , j)              , blk_id_arr[row - 1 + (i*row)       + (j*row*col)])
+			# set_cell_item(Vector3(i      , 0      , j)              , blk_id_arr[i                       + (j*row*col)])
+			# set_cell_item(Vector3(i      , col - 1, j)              , blk_id_arr[i       + ((col-1)*row) + (j*row*col)])
+			# set_cell_item(Vector3(i      , j      , 0)              , blk_id_arr[i       + (j*row)                    ])
+			# set_cell_item(Vector3(i      , j      , cll - 1), blk_id_arr[i       + (j*row)       + ((cll - 1)*row*col)])
+
+			# 2.57% boost. (2987.642 + 2953.954 + 2975.305) / (2896.144 + 2885.804 + 2910.767)	if blk_id_arr[i*row + (j*row*col)] != Air:
+			# if blk_id_arr[i*row + (j*row*col)] != Air:
+			# 	set_cell_item(Vector3(0      , i      , j)              , blk_id_arr[          (i*row)       + (j*row*col)])
+			# if blk_id_arr[row - 1 + (i*row) + (j*row*col)] != Air:
+			# 	set_cell_item(Vector3(row - 1, i      , j)              , blk_id_arr[row - 1 + (i*row)       + (j*row*col)])
+			# if blk_id_arr[i + (j*row*col)] != Air:
+			# 	set_cell_item(Vector3(i      , 0      , j)              , blk_id_arr[i                       + (j*row*col)])
+			# if blk_id_arr[i + ((col-1)*row) + (j*row*col)] != Air:
+			# 	set_cell_item(Vector3(i      , col - 1, j)              , blk_id_arr[i       + ((col-1)*row) + (j*row*col)])
+			# if blk_id_arr[i + (j*row)] != Air:
+			# 	set_cell_item(Vector3(i      , j      , 0)              , blk_id_arr[i       + (j*row)                    ])
+			# if blk_id_arr[i + (j*row) + ((cll - 1)*row*col)] != Air:
+			# 	set_cell_item(Vector3(i      , j      , cll - 1), blk_id_arr[i       + (j*row)       + ((cll - 1)*row*col)])
+
+			# Slow as the first one.
+#			var a := blk_id_arr[i*row + (j*row*col)]
+#			var b := blk_id_arr[row - 1 + (i*row) + (j*row*col)]
+#			var c := blk_id_arr[i + (j*row*col)]
+#			var d := blk_id_arr[i + ((col-1)*row) + (j*row*col)]
+#			var e := blk_id_arr[i + (j*row)]
+#			var f := blk_id_arr[i + (j*row) + ((cll - 1)*row*col)]
+#			set_cell_item(Vector3(0      , i      , j)              , a)
+#			set_cell_item(Vector3(row - 1, i      , j)              , b)
+#			set_cell_item(Vector3(i      , 0      , j)              , c)
+#			set_cell_item(Vector3(i      , col - 1, j)              , d)
+#			set_cell_item(Vector3(i      , j      , 0)              , e)
+#			set_cell_item(Vector3(i      , j      , cll - 1), f)
+
+			# Don't optimize this please! I checked with Air and by not reading the memory.
+			# It barely slows down.
+#			set_cell_item(Vector3(0      , i      , j)              , Air)
+#			set_cell_item(Vector3(row - 1, i      , j)              , Air)
+#			set_cell_item(Vector3(i      , 0      , j)              , Air)
+#			set_cell_item(Vector3(i      , col - 1, j)              , Air)
+#			set_cell_item(Vector3(i      , j      , 0)              , Air)
+#			set_cell_item(Vector3(i      , j      , cll - 1), Air)
+
+			# Get rid of the second one! And use this one.
+			# This won't work well with non-cube chunk.
+			var LEFT_BLOCK := blk_id_arr[i*row + (j*row*col)] # LEFT_BLOCK as in Vector3.LEFT
+			var RIGHT_BLOCK := blk_id_arr[row - 1 + (i*row) + (j*row*col)]
+			var UP_BLOCK := blk_id_arr[i + ((col-1)*row) + (j*row*col)]
+			var DOWN_BLOCK := blk_id_arr[i + (j*row*col)] # Why the row has to be 1? # Fixed now
+			var FORWARD_BLOCK := blk_id_arr[i + (j*row)] # Note! FORWARD as is Vector3.FORWARD
+			var BACK_BLOCK := blk_id_arr[i + (j*row) + ((cll - 1)*row*col)]
+			if LEFT_BLOCK != Air:    set_cell_item(Vector3(0, i, j), LEFT_BLOCK)
+			if RIGHT_BLOCK != Air:   set_cell_item(Vector3(row - 1, i, j), RIGHT_BLOCK)
+			if UP_BLOCK != Air:      set_cell_item(Vector3(i, col - 1, j), UP_BLOCK)
+			if DOWN_BLOCK != Air:    set_cell_item(Vector3(i, 0, j), DOWN_BLOCK)
+			if FORWARD_BLOCK != Air: set_cell_item(Vector3(i, j, 0), FORWARD_BLOCK)
+			if BACK_BLOCK != Air:    set_cell_item(Vector3(i, j, cll - 1), BACK_BLOCK)
 
 	set_cell_time = (Time.get_ticks_usec() - set_cell_time) / 1000.0
 
 	if dbg >= PerformanceInfo.Time:
-		var block_sum: int = row * col * dimension.z
+		var block_sum: int = row * col * cll
 		var regenerating_time: float = (Time.get_ticks_usec() - start) / 1000.0
 		var bps: int = floori(block_sum / ((Time.get_ticks_usec() - start) / 1_000_000.0))
 		prt_perf_stat("_regenerate()", clean_time, regenerating_time, bps, block_id_time, set_cell_time)
