@@ -2,9 +2,11 @@
 class_name Chunk extends GridMap
 
 enum PerformanceInfo { None, Time, Info, Verbose }
-var dbg := PerformanceInfo.Time
+var perf_dbg := PerformanceInfo.Time
+enum UnitTest { None, Light, Brute_force } # Brute_force will freeze Godot for at least 10 seconds
+var err_dbg := UnitTest.Light
 
-enum { Dirt, Grass, Stone, Void_grass, Crystal_blue, Air=254, Reset=255 }
+enum { Dirt, Grass, Stone, Void_grass, Crystal_blue, Air=254, Error=255 }
 
 var body = RID()
 
@@ -17,17 +19,43 @@ var blk_id_arr := PackedByteArray()
 func _init() -> void:
 	position.y = -col
 	blk_id_arr.resize(row * col * cll)
+	blk_id_arr.fill(Error)
 
 
 func _ready() -> void:
 	_regenerate()
+	if err_dbg >= UnitTest.Light:
+		unit_test()
 
 
-@warning_ignore("narrowing_conversion")
-func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position.z)) -> void:
+func _regenerate() -> void:
 	var clean_time := clean()
 	var start: float = Time.get_ticks_usec()
 
+	var block_id_time: float = _regenerate_block_id()
+	if err_dbg >= UnitTest.Light:
+		var error_found_index := blk_id_arr.find(Error)
+		@warning_ignore("integer_division")
+		var xyz := [error_found_index % row, error_found_index / row % col, error_found_index / row / col]
+		if error_found_index != -1:
+			push_error("".join(["Found Error(id 255)/Unused in the blk_id_arr[", error_found_index, "] or ", xyz," when generating blocks... Is it unused?"]))
+
+	var set_cell_time: float = _set_cell()
+	if err_dbg >= UnitTest.Light:
+		var air_list := get_used_cells_by_item(Air)
+		if air_list:
+			push_error("".join(["Found ", len(air_list), " Air(id 254)! There should be no air in the Chunk! Use GridMap.INVALID_CELL_ITEM instead."]))
+
+	if perf_dbg >= PerformanceInfo.Time:
+		var block_sum := row * col * cll
+		var regenerating_time: float = (Time.get_ticks_usec() - start) / 1000.0
+		var bps := floori(block_sum / ((Time.get_ticks_usec() - start) / 1_000_000.0))
+		prt_perf_stat("_regenerate()", clean_time, regenerating_time, bps, block_id_time, set_cell_time)
+
+
+@warning_ignore("narrowing_conversion")
+func _regenerate_block_id(pos: Vector3i = Vector3i(position.x, position.y + col, position.z)) -> float:
+	var block_id_time: float = Time.get_ticks_usec()
 	var noi := FastNoiseLite.new()
 	noi.set_offset(pos)
 	noi.set_frequency(0.03)
@@ -35,7 +63,6 @@ func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position
 	var rng := RandomNumberGenerator.new()
 	rng.set_seed(1023)
 
-	var block_id_time: float = Time.get_ticks_usec()
 	for x in row:
 		for y in col:
 			for z in cll:
@@ -53,8 +80,11 @@ func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position
 						blk_id = Stone
 
 				blk_id_arr[x + (y*row) + (z*row*col)] = blk_id
-	block_id_time = (Time.get_ticks_usec() - block_id_time) / 1000.0
 
+	return (Time.get_ticks_usec() - block_id_time) / 1000.0
+
+
+func _set_cell() -> float:
 	var set_cell_time: float = Time.get_ticks_usec()
 
 #	for x in row: # debug
@@ -68,18 +98,27 @@ func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position
 			for z in cll:
 				if blk_id_arr[x + (y*row) + (z*row*col)] != Air: continue
 				var v3 := Vector3(x, y, z)
-				if x-1 > 0: set_cell_item(v3 + Vector3.LEFT,    blk_id_arr[x-1 + (y*row)     + (z*row*col)])
-				if y-1 > 0: set_cell_item(v3 + Vector3.DOWN,    blk_id_arr[x   + ((y-1)*row) + (z*row*col)])
-				if z-1 > 0: set_cell_item(v3 + Vector3.FORWARD, blk_id_arr[x   + (y*row)     + ((z-1)*row*col)])
-				if x+1 < row: set_cell_item(v3 + Vector3.RIGHT, blk_id_arr[x+1 + (y*row)     + (z*row*col)])
-				if y+1 < col: set_cell_item(v3 + Vector3.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)]) # does this cause the top block not showing? fixed it by using col instead of row
-				if z+1 < cll: set_cell_item(v3 + Vector3.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
+				var LEFT_BLOCK: int = Air; var DOWN_BLOCK: int = Air; var FORWARD_BLOCK: int = Air; var RIGHT_BLOCK: int = Air; var UP_BLOCK: int = Air; var BACK_BLOCK: int = Air
+				if x-1 > 0: LEFT_BLOCK = blk_id_arr[x-1 + (y*row) + (z*row*col)]
+				if y-1 > 0: DOWN_BLOCK = blk_id_arr[x + ((y-1)*row) + (z*row*col)]
+				if z-1 > 0: FORWARD_BLOCK = blk_id_arr[x + (y*row) + ((z-1)*row*col)]
+				if x+1 < row: RIGHT_BLOCK = blk_id_arr[x+1 + (y*row) + (z*row*col)]
+				if y+1 < col: UP_BLOCK = blk_id_arr[x + ((y+1)*row) + (z*row*col)]
+				if z+1 < cll: BACK_BLOCK = blk_id_arr[x + (y*row) + ((z+1)*row*col)]
+				if LEFT_BLOCK != Air: set_cell_item(v3 + Vector3.LEFT, LEFT_BLOCK)
+				if DOWN_BLOCK != Air: set_cell_item(v3 + Vector3.DOWN, DOWN_BLOCK)
+				if FORWARD_BLOCK != Air: set_cell_item(v3 + Vector3.FORWARD, FORWARD_BLOCK)
+				if RIGHT_BLOCK != Air: set_cell_item(v3 + Vector3.RIGHT, RIGHT_BLOCK)
+				if UP_BLOCK != Air: set_cell_item(v3 + Vector3.UP, UP_BLOCK)
+				if BACK_BLOCK != Air: set_cell_item(v3 + Vector3.BACK, BACK_BLOCK)
 
 	# Edge
 	for i in row:
 		for j in col:
 			var FORWARD_BLOCK := blk_id_arr[i + (j*row)] # Note! FORWARD as is Vector3.FORWARD
 			var BACK_BLOCK := blk_id_arr[i + (j*row) + ((cll-1)*row*col)]
+			if FORWARD_BLOCK or BACK_BLOCK == Air: continue
+
 			if FORWARD_BLOCK != Air: set_cell_item(Vector3(i, j, 0), FORWARD_BLOCK)
 			if BACK_BLOCK != Air:    set_cell_item(Vector3(i, j, cll - 1), BACK_BLOCK)
 
@@ -87,6 +126,8 @@ func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position
 		for j in col:
 			var LEFT_BLOCK := blk_id_arr[j*row + (i*row*col)]  # LEFT_BLOCK as in Vector3.LEFT
 			var RIGHT_BLOCK := blk_id_arr[row - 1 + (j*row) + (i*row*col)]
+			if LEFT_BLOCK or RIGHT_BLOCK == Air: continue
+
 			if LEFT_BLOCK != Air:    set_cell_item(Vector3(0, j, i), LEFT_BLOCK)
 			if RIGHT_BLOCK != Air:   set_cell_item(Vector3(row - 1, j, i), RIGHT_BLOCK)
 
@@ -94,16 +135,21 @@ func _regenerate(pos: Vector3i = Vector3i(position.x, position.y + col, position
 		for j in cll:
 			var UP_BLOCK := blk_id_arr[i + ((col-1)*row) + (j*row*col)]
 			var DOWN_BLOCK := blk_id_arr[i + (j*row*col)]
+			if UP_BLOCK or DOWN_BLOCK == Air: continue
+
 			if UP_BLOCK != Air:      set_cell_item(Vector3(i, col - 1, j), UP_BLOCK)
 			if DOWN_BLOCK != Air:    set_cell_item(Vector3(i, 0, j), DOWN_BLOCK)
 
-	set_cell_time = (Time.get_ticks_usec() - set_cell_time) / 1000.0
+	return (Time.get_ticks_usec() - set_cell_time) / 1000.0
 
-	if dbg >= PerformanceInfo.Time:
-		var block_sum: int = row * col * cll
-		var regenerating_time: float = (Time.get_ticks_usec() - start) / 1000.0
-		var bps: int = floori(block_sum / ((Time.get_ticks_usec() - start) / 1_000_000.0))
-		prt_perf_stat("_regenerate()", clean_time, regenerating_time, bps, block_id_time, set_cell_time)
+func unit_test() -> void:
+	var start: float = Time.get_ticks_usec()
+	if err_dbg >= UnitTest.Brute_force:
+		for x in range(-row, row * 2):
+			for y in range(-col, col * 2):
+				for z in range(-cll, cll * 2):
+					destory_block(x, y, z)
+	print("unit_test() completed in ", (Time.get_ticks_usec() - start) / 1000.0," ms")
 
 # Non-important function are spaced 1 newline instead of 2.
 func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
@@ -114,9 +160,8 @@ func minimum(nums: PackedInt64Array) -> int:
 	return ret
 
 func destory_block(x: int, y: int, z: int) -> void:
-	# Fixed the bug!
 	if minimum([x, y, z]) < 0: return
-	if x > row or y > col or z > cll: return
+	if x >= row or y >= col or z >= cll: return # Found the bug by unit_test() and fixed the bug!
 	blk_id_arr[x + (y*row) + (z*row*col)] = Air
 	set_cell_item(Vector3i(x, y, z), Air)
 
