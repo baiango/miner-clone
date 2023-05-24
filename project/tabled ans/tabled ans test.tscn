@@ -10,30 +10,15 @@
 
 [node name="chunks" type="Node3D" parent="."]
 
-[node name="OmniLight3D" type="OmniLight3D" parent="chunks"]
-transform = Transform3D(0.996931, 0.000404015, 0.078284, 0, 0.999987, -0.00516082, -0.078285, 0.00514498, 0.996918, 16.4811, -8.99568, 6.18811)
-shadow_enabled = true
-omni_range = 4096.0
-
-[node name="OmniLight3D2" type="OmniLight3D" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.17605, -7.82848, 24.4049)
-shadow_enabled = true
-omni_range = 4096.0
-
-[node name="OmniLight3D3" type="OmniLight3D" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6058, -29.7963, 2.33475)
-shadow_enabled = true
-omni_range = 4096.0
-
 [node name="GridMap" type="GridMap" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -128, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -64, 0)
 mesh_library = ExtResource("1_1mu4v")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_m4x4q")
 metadata/_editor_floor_ = Vector3(0, 1, 0)
 
 [node name="Chunk" type="GridMap" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -128, -32)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -64, -16)
 mesh_library = ExtResource("1_1mu4v")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_m4x4q")
@@ -50,6 +35,23 @@ shadow_enabled = true
 script = ExtResource("5_invfk")
 
 [node name="kira" parent="." instance=ExtResource("4_kj1ay")]
+
+[node name="lights" type="Node3D" parent="."]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="lights"]
+transform = Transform3D(0.996931, 0.000404015, 0.078284, 0, 0.999987, -0.00516082, -0.078285, 0.00514498, 0.996918, 16.4811, -8.99568, 6.18811)
+shadow_enabled = true
+omni_range = 4096.0
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.17605, -7.82848, 24.4049)
+shadow_enabled = true
+omni_range = 4096.0
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6058, -29.7963, 2.33475)
+shadow_enabled = true
+omni_range = 4096.0
 
 [connection signal="tree_exiting" from="chunks/GridMap" to="chunks/GridMap" method="_on_tree_exiting"]
 [connection signal="tree_exiting" from="chunks/Chunk" to="chunks/Chunk" method="_on_tree_exiting"]

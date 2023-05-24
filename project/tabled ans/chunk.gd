@@ -11,7 +11,7 @@ enum { Dirt, Grass, Stone, Void_grass, Crystal_blue, Air=254, Error=255 }
 var body = RID()
 
 
-var dimension := Vector3i(64, 128, 32)
+var dimension := Vector3i(32, 64, 16)
 var row := dimension.x
 var col := dimension.y
 var cll := dimension.z # cells
@@ -68,10 +68,10 @@ func _regenerate_block_id(pos: Vector3i = Vector3i(position.x, position.y + col,
 			for z in cll:
 				var val := noi.get_noise_3d(x, y, z)
 				var rnd_deep := rng.randi()
-				var density := -0.5 + (pos.y + y / 200.0)
+#				var density := -0.5 + (pos.y + y / 200.0)
 
 				var blk_id := Air
-				if val > density:
+				if val > -0.3:
 					if y > col - 3:
 						blk_id = Grass
 					elif y > (rnd_deep & 1) + col - 7:
@@ -117,8 +117,6 @@ func _set_cell() -> float:
 		for j in col:
 			var FORWARD_BLOCK := blk_id_arr[i + (j*row)] # Note! FORWARD as is Vector3.FORWARD
 			var BACK_BLOCK := blk_id_arr[i + (j*row) + ((cll-1)*row*col)]
-			if FORWARD_BLOCK or BACK_BLOCK == Air: continue
-
 			if FORWARD_BLOCK != Air: set_cell_item(Vector3(i, j, 0), FORWARD_BLOCK)
 			if BACK_BLOCK != Air:    set_cell_item(Vector3(i, j, cll - 1), BACK_BLOCK)
 
@@ -126,8 +124,6 @@ func _set_cell() -> float:
 		for j in col:
 			var LEFT_BLOCK := blk_id_arr[j*row + (i*row*col)]  # LEFT_BLOCK as in Vector3.LEFT
 			var RIGHT_BLOCK := blk_id_arr[row - 1 + (j*row) + (i*row*col)]
-			if LEFT_BLOCK or RIGHT_BLOCK == Air: continue
-
 			if LEFT_BLOCK != Air:    set_cell_item(Vector3(0, j, i), LEFT_BLOCK)
 			if RIGHT_BLOCK != Air:   set_cell_item(Vector3(row - 1, j, i), RIGHT_BLOCK)
 
@@ -135,8 +131,6 @@ func _set_cell() -> float:
 		for j in cll:
 			var UP_BLOCK := blk_id_arr[i + ((col-1)*row) + (j*row*col)]
 			var DOWN_BLOCK := blk_id_arr[i + (j*row*col)]
-			if UP_BLOCK or DOWN_BLOCK == Air: continue
-
 			if UP_BLOCK != Air:      set_cell_item(Vector3(i, col - 1, j), UP_BLOCK)
 			if DOWN_BLOCK != Air:    set_cell_item(Vector3(i, 0, j), DOWN_BLOCK)
 
