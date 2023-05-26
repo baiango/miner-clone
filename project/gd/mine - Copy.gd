@@ -28,18 +28,90 @@ func _input(event: InputEvent) -> void:
 func _on_break_block_timeout() -> void:
 	var hit_pos := Vector3i(hit.get_global_position().floor())
 	var chunk_pos := Vector3i(
-		hit_pos.x,
-		hit_pos.y,
-		hit_pos.z
+		floorf(float(hit_pos.x) / row) * row,
+		floorf(float(hit_pos.y) / col) * col,
+		floorf(float(hit_pos.z) / cll) * cll,
 	)
 
-	blks = null
-	for node in Glob.CHUNKS.get_children():
-		if (node as Chunk).get_position() == Vector3(chunk_pos):
-			blks = node as Chunk
+#	hit_pos.y += col
+	# hit_pos.x = (hit_pos.x + row) % row
+	# hit_pos.y = (hit_pos.y + col) % col
+	# hit_pos.z = (hit_pos.z + cll) % cll
 
-	($BreakPos as Node3D).position = Vector3(hit_pos)
-	print("chunk_pos: ", chunk_pos)
+	($BreakPos as Node3D).position = Vector3(hit_pos) + Vector3(chunk_pos)
+	($BreakPos as Node3D).position.y += col
+
+	var chunks := Glob.CHUNKS.get_children()
+	blks = null
+	for c in chunks:
+		if (c as Chunk).get_position() == Vector3(chunk_pos):
+			blks = c as Chunk
+			break
+
+	if blks:
+		if blks.get_cell_item(hit_pos) == GridMap.INVALID_CELL_ITEM:
+			print("down!")
+
+			chunk_pos = Vector3i(
+				floorf(float(hit_pos.x) / row) * row,
+				floorf(float(hit_pos.y) / col) * col,
+				floorf(float(hit_pos.z) / cll) * cll,
+			)
+
+			blks = null
+			for c in chunks:
+				if (c as Chunk).get_position() == Vector3(chunk_pos):
+					blks = c as Chunk
+					break
+
+			print("hit_pos: ", hit_pos)
+			print("chunk_pos: ", chunk_pos)
+			print("hit unmod pos: ", Vector3i(hit.get_global_position().floor()))
+			print(blks)
+	else:
+		print("down!")
+
+		chunk_pos = Vector3i(
+			floorf(float(hit_pos.x) / row) * row,
+			floorf(float(hit_pos.y) / col) * col,
+			floorf(float(hit_pos.z) / cll) * cll,
+		)
+
+		blks = null
+		for c in chunks:
+			if (c as Chunk).get_position() == Vector3(chunk_pos):
+				blks = c as Chunk
+				break
+
+		print("hit_pos: ", hit_pos)
+		print("chunk_pos: ", chunk_pos)
+		print("hit unmod pos: ", Vector3i(hit.get_global_position().floor()))
+		print(blks)
+
+	if blks:
+		print("checking")
+		if blks.get_cell_item(hit_pos) != GridMap.INVALID_CELL_ITEM:
+			print("destory!")
+			destory_block(hit_pos)
+		else:
+			hit_miss.play()
+
+	# for i in 3:
+	# 	if blks:
+	# 		if blks.get_cell_item(hit_pos) == GridMap.INVALID_CELL_ITEM:
+	# 			down.call()
+	# 		elif blks.get_cell_item(hit_pos) != GridMap.INVALID_CELL_ITEM:
+	# 			destory_block(hit_pos)
+	# 			hit.play()
+	# 		else:
+	# 			hit_miss.play()
+	# 	else:
+	# 		down.call()
+
+	# print(chunk_pos)
+	# print(hit_pos)
+	($BreakPos as Node3D).position = Vector3(hit_pos) + Vector3(chunk_pos)
+#	($BreakPos as Node3D).position.y += col
 	print("BreakPos: ", ($BreakPos as Node3D).position)
 
 

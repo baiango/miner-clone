@@ -5309,10 +5309,9 @@ wait_time = 1.333
 one_shot = true
 
 [node name="BreakPos" type="Node3D" parent="Kira/mine"]
-visible = false
 
 [node name="BreakPos2" type="MeshInstance3D" parent="Kira/mine/BreakPos"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -0.5, -0.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
 mesh = SubResource("BoxMesh_ppuab")
 skeleton = NodePath("../..")
 
@@ -5329,7 +5328,7 @@ bones/1/parent = 0
 bones/1/rest = Transform3D(1, 2.35838e-09, -2.42288e-09, -2.42288e-09, 0.999636, -0.0269767, 2.35838e-09, 0.0269767, 0.999636, 1.34358e-09, 0.0579734, 0.0153687)
 bones/1/enabled = true
 bones/1/position = Vector3(1.34358e-09, 0.0579734, 0.0153687)
-bones/1/rotation = Quaternion(0.0163448, 4.53141e-06, 7.84456e-07, 0.999866)
+bones/1/rotation = Quaternion(0.0138513, 4.53105e-06, 7.86119e-07, 0.999904)
 bones/1/scale = Vector3(1, 1, 1)
 bones/2/name = "Chest"
 bones/2/parent = 1
@@ -5679,7 +5678,7 @@ bones/51/parent = 0
 bones/51/rest = Transform3D(1, -3.90119e-08, -3.79797e-08, -3.7979e-08, -0.99964, 0.0268268, -3.90126e-08, -0.0268267, -0.99964, 0.0688542, -0.0285541, 0.000131469)
 bones/51/enabled = true
 bones/51/position = Vector3(0.0688542, -0.0285541, 0.000131469)
-bones/51/rotation = Quaternion(0.999911, 0.00147452, -0.000786496, -0.0132732)
+bones/51/rotation = Quaternion(0.99991, 0.000228672, -0.000121997, -0.0133926)
 bones/51/scale = Vector3(1.00004, 1.0001, 0.999891)
 bones/52/name = "J_Sec_L_SkirtBack_01"
 bones/52/parent = 51
@@ -5763,7 +5762,7 @@ bones/63/parent = 62
 bones/63/rest = Transform3D(1, 3.53764e-15, -9.46435e-16, -8.88176e-16, 0.485022, 0.874502, 3.55272e-15, -0.874502, 0.485022, -2.22045e-16, 0.430382, 1.86264e-09)
 bones/63/enabled = true
 bones/63/position = Vector3(-2.22045e-16, 0.430382, 1.86264e-09)
-bones/63/rotation = Quaternion(-0.505471, 0.0781822, 0.0404077, 0.858344)
+bones/63/rotation = Quaternion(-0.505116, 0.0849181, 0.0438894, 0.857741)
 bones/63/scale = Vector3(1, 1.00002, 0.999965)
 bones/64/name = "Right toe"
 bones/64/parent = 63
@@ -5774,7 +5773,7 @@ bones/64/rotation = Quaternion(7.45058e-09, 2.91168e-22, 1.12497e-22, 1)
 bones/64/scale = Vector3(1, 1, 1)
 
 [node name="Flashlight" type="BoneAttachment3D" parent="Kira/Skeleton3D"]
-transform = Transform3D(0.972741, 0.231894, -0.00319445, -0.214318, 0.904136, 0.369621, 0.0886062, -0.358865, 0.929186, -0.194141, 0.806318, 0.084174)
+transform = Transform3D(0.972741, 0.231894, -0.00319448, -0.213873, 0.902335, 0.374251, 0.089674, -0.36337, 0.927331, -0.194141, 0.806663, 0.0850511)
 visible = false
 bone_name = "Flashlight"
 bone_idx = 49
@@ -5784,7 +5783,7 @@ mesh = ExtResource("1_kouu1")
 skeleton = NodePath("")
 
 [node name="pipe" type="BoneAttachment3D" parent="Kira/Skeleton3D"]
-transform = Transform3D(0.776972, -0.0612651, -0.626549, -0.566914, 0.36466, -0.738682, 0.273743, 0.929132, 0.2486, -0.188909, 0.940293, 0.290632)
+transform = Transform3D(0.776972, -0.0612651, -0.626549, -0.565542, 0.36929, -0.737433, 0.276568, 0.927302, 0.252281, -0.188909, 0.941666, 0.290839)
 bone_name = "pipe"
 bone_idx = 50
 

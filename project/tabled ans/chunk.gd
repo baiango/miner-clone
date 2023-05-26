@@ -11,7 +11,7 @@ enum { Dirt, Grass, Stone, Void_grass, Crystal_blue, Air=254, Error=255 }
 var body = RID()
 
 
-var dimension := Vector3i(32, 64, 16)
+var dimension := Glob.dimension
 var row := dimension.x
 var col := dimension.y
 var cll := dimension.z # cells
@@ -24,8 +24,6 @@ func _init() -> void:
 
 func _ready() -> void:
 	_regenerate()
-	if err_dbg >= UnitTest.Light:
-		unit_test()
 
 
 func _regenerate() -> void:
@@ -136,35 +134,8 @@ func _set_cell() -> float:
 
 	return (Time.get_ticks_usec() - set_cell_time) / 1000.0
 
-func unit_test() -> void:
-	var start: float = Time.get_ticks_usec()
-	if err_dbg >= UnitTest.Brute_force:
-		for x in range(-row, row * 2):
-			for y in range(-col, col * 2):
-				for z in range(-cll, cll * 2):
-					destory_block(x, y, z)
-	print("unit_test() completed in ", (Time.get_ticks_usec() - start) / 1000.0," ms")
-
 # Non-important function are spaced 1 newline instead of 2.
 func cbrt(num: float) -> float: return pow(num, 1.0/3.0)
-
-func minimum(nums: PackedInt64Array) -> int:
-	var ret := 2 ** 63 - 1
-	for n in nums: ret = mini(ret, n)
-	return ret
-
-func destory_block(x: int, y: int, z: int) -> void:
-	if minimum([x, y, z]) < 0: return
-	if x >= row or y >= col or z >= cll: return # Found the bug by unit_test() and fixed the bug!
-	blk_id_arr[x + (y*row) + (z*row*col)] = Air
-	set_cell_item(Vector3i(x, y, z), Air)
-
-	if x-1 > 0: set_cell_item(Vector3i(x, y, z) + Vector3i.LEFT,    blk_id_arr[x-1 + (y*row)     + (z*row*col)])
-	if y-1 > 0: set_cell_item(Vector3i(x, y, z) + Vector3i.DOWN,    blk_id_arr[x   + ((y-1)*row) + (z*row*col)])
-	if z-1 > 0: set_cell_item(Vector3i(x, y, z) + Vector3i.FORWARD, blk_id_arr[x   + (y*row)     + ((z-1)*row*col)])
-	if x+1 < row: set_cell_item(Vector3i(x, y, z) + Vector3i.RIGHT, blk_id_arr[x+1 + (y*row)     + (z*row*col)])
-	if y+1 < col: set_cell_item(Vector3i(x, y, z) + Vector3i.UP,    blk_id_arr[x   + ((y+1)*row) + (z*row*col)])
-	if z+1 < cll: set_cell_item(Vector3i(x, y, z) + Vector3i.BACK,  blk_id_arr[x   + (y*row)     + ((z+1)*row*col)])
 
 func clean() -> float:
 	var start: float = Time.get_ticks_usec()

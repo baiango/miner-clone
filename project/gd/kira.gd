@@ -27,7 +27,9 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("ctrl + f4"):
 		position = Vector3.BACK
-		(Glob.BLKS as Chunk).reset()
+		velocity = Vector3.ZERO
+		for c in (Glob.CHUNKS as Node3D).get_children():
+			(c as Chunk).reset()
 		($reset as AudioStreamPlayer).play()
 
 
