@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://bymnvvnx1nd2u"]
+[gd_scene load_steps=7 format=3 uid="uid://bymnvvnx1nd2u"]
 
 [ext_resource type="Script" path="res://tabled ans/gen.gd" id="1_01rx0"]
+[ext_resource type="Script" path="res://tabled ans/Node3D.cs" id="2_uo78g"]
 [ext_resource type="Environment" uid="uid://c5gyx8wtph1ts" path="res://scene_color.tres" id="3_6n8q3"]
 [ext_resource type="PackedScene" uid="uid://c57yv34qdd03m" path="res://model/kira/kira.tscn" id="4_kj1ay"]
 [ext_resource type="Script" path="res://tabled ans/threads_mgr.gd" id="5_invfk"]
@@ -18,6 +19,9 @@ use_collision = true
 
 [node name="gen" type="Node3D" parent="chunks"]
 script = ExtResource("1_01rx0")
+
+[node name="Node3D" type="Node3D" parent="chunks"]
+script = ExtResource("2_uo78g")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_6n8q3")
