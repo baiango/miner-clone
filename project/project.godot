@@ -29,6 +29,10 @@ gdscript/warnings/unsafe_call_argument=2
 gdscript/warnings/unsafe_void_return=2
 gdscript/warnings/int_as_enum_without_cast=2
 
+[dotnet]
+
+project/assembly_name="miner clone"
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true
