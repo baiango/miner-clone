@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://bymnvvnx1nd2u"]
+[gd_scene load_steps=7 format=3 uid="uid://bymnvvnx1nd2u"]
 
-[ext_resource type="MeshLibrary" uid="uid://d0dcx1gek5rgs" path="res://model/blocks/res/blocks.meshlib" id="1_1mu4v"]
-[ext_resource type="Script" path="res://tabled ans/chunk.gd" id="2_m4x4q"]
+[ext_resource type="Script" path="res://tabled ans/chunk_server.gd" id="1_o51el"]
+[ext_resource type="Script" path="res://tabled ans/multimesh.gd" id="2_utp5u"]
 [ext_resource type="Environment" uid="uid://c5gyx8wtph1ts" path="res://scene_color.tres" id="3_6n8q3"]
+[ext_resource type="Script" path="res://tabled ans/mesh.gd" id="3_w8x0m"]
 [ext_resource type="PackedScene" uid="uid://c57yv34qdd03m" path="res://model/kira/kira.tscn" id="4_kj1ay"]
 [ext_resource type="Script" path="res://tabled ans/threads_mgr.gd" id="5_invfk"]
 
@@ -10,19 +11,18 @@
 
 [node name="chunks" type="Node3D" parent="."]
 
-[node name="GridMap" type="GridMap" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -64, 0)
-mesh_library = ExtResource("1_1mu4v")
-cell_size = Vector3(1, 1, 1)
-script = ExtResource("2_m4x4q")
-metadata/_editor_floor_ = Vector3(0, 1, 0)
+[node name="chunk" type="Node3D" parent="chunks"]
+script = ExtResource("1_o51el")
 
-[node name="Chunk" type="GridMap" parent="chunks"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -64, -16)
-mesh_library = ExtResource("1_1mu4v")
-cell_size = Vector3(1, 1, 1)
-script = ExtResource("2_m4x4q")
-metadata/_editor_floor_ = Vector3(0, 8, 0)
+[node name="CSGBox3D" type="CSGBox3D" parent="chunks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+use_collision = true
+
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="chunks"]
+script = ExtResource("2_utp5u")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="chunks"]
+script = ExtResource("3_w8x0m")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_6n8q3")
@@ -53,5 +53,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6058, -29.7963, 2.33475)
 shadow_enabled = true
 omni_range = 4096.0
 
-[connection signal="tree_exiting" from="chunks/GridMap" to="chunks/GridMap" method="_on_tree_exiting"]
-[connection signal="tree_exiting" from="chunks/Chunk" to="chunks/Chunk" method="_on_tree_exiting"]
+[connection signal="tree_exiting" from="chunks/chunk" to="chunks/chunk" method="_on_tree_exiting"]

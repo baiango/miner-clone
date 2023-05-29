@@ -7,6 +7,7 @@
 #include <godot_cpp/godot.hpp>
 
 #include "cosmic.h"
+#include "chunk.h"
 
 using namespace godot;
 
@@ -14,6 +15,7 @@ void initialize_cosmic_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 	ClassDB::register_class<Cosmic>();
+	ClassDB::register_class<ChunkServer>();
 }
 
 void uninitialize_cosmic_module(ModuleInitializationLevel p_level) {

@@ -11,6 +11,7 @@ func _input(event) -> void:
 @onready var hit_miss := $"../Skeleton3D/pipe/pipe/hit/hit_miss" as AudioStreamPlayer3D
 @onready var blks := Glob.BLKS as Chunk
 func _on_break_block_timeout() -> void:
+	return
 	var pos := Vector3i(hit.get_global_position().floor())
 	pos += Vector3i(0, blks.dimension.y, 0)
 

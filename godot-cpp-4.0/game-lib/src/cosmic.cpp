@@ -4,9 +4,10 @@
 using namespace godot;
 
 void Cosmic::_bind_methods()
-{	ClassDB::bind_method(D_METHOD("rng64", "bit_size"), &Cosmic::rng64, DEFVAL(64));
+{
+	ClassDB::bind_method(D_METHOD("rng64", "bit_size"), &Cosmic::rng64, DEFVAL(64));
 	ClassDB::bind_method(D_METHOD("rng_array", "size", "bit_size"), &Cosmic::rng_array, DEFVAL(nullptr), DEFVAL(64));
-	ClassDB::bind_method(D_METHOD("arr3d", "x", "y", "z"), &Cosmic::arr3d); }
+}
 
 Cosmic::Cosmic()
 {	rng_seed = 1023; }
@@ -44,7 +45,14 @@ https://onlinelibrary.wiley.com/doi/10.1002/spe.3030
 128 bits
 0xdb36357734e34abb0050d0761fcdfc15
 0xaadec8c3186345282b4e141f3a1232d5 */
-// Can't find "#include <bits/stdc++.h>" and use std::clamp?
+// https://docs.godotengine.org/en/stable/about/faq.html#doc-faq-why-not-stl
+// No STL! It will make the debug symbol so large that makes it hard to move around.
+// #include <algorithm>
+// inline uint64_t Cosmic::rng64(int bit_size)
+// {	bit_size = std::clamp(bit_size, 0, 64);
+// 	rng_seed *= 0xdefba91144f2b375;
+// 	return rng_seed >> (64 - bit_size); }
+
 uint64_t Cosmic::clamp(uint64_t value, uint64_t min, uint64_t max)
 {	if (value < min) return min;
 	if (value > max) return max;
@@ -61,20 +69,3 @@ Array Cosmic::rng_array(int size, int bit_size)
 	ret.resize(size);
 	for (int i = 0; i < size; i++) ret[i] = rng64(bit_size);
 	return ret; }
-
-/* It's just much easier to use 1d array than 3d in GDScript!
-   Use this! x + (y*row) + (z*row*col)
-   And this code don't even work yet. */
-/* Array Cosmic::arr3d(int x, int y, int z)
-{	Array ret;
-	Array arr_y;
-	Array arr_z;
-	ret.resize(x);
-	arr_y.resize(y);
-	arr_z.resize(z);
-
-	for (int ix = 0; ix < x; ix++)
-	{	ret[ix] = arr_y;
-		for (int iy = 0; iy < y; iy++)
-		{	ret[ix][iy] = arr_z; }}
-	return ret; } */

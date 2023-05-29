@@ -27,7 +27,7 @@ func _input(event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("ctrl + f4"):
 		position = Vector3.BACK
-		(Glob.BLKS as Chunk).reset()
+#		(Glob.BLKS as Chunk).reset()
 		($reset as AudioStreamPlayer).play()
 
 
