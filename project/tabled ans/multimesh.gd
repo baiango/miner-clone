@@ -22,9 +22,14 @@ func _ready():
 	var set_mesh_time := (Time.get_ticks_usec() - start) / 1000.0
 	print_debug(set_mesh_time)
 
+	var chk := ChunkServer.new()
+	print_debug(chk.generate_chunk())
 
 func flat_3d_to_1d(x: int, y: int, z: int) -> int:
 	return x + (y * row) + (z * row * col);
 
 func expand_1d_to_3d(i: int) -> Vector3i:
 	return Vector3i(i % row, i / row, i / (row * col))
+
+func _on_tree_exiting():
+	multimesh = null

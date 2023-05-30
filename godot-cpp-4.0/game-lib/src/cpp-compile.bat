@@ -1,6 +1,5 @@
 echo You must quit the Godot by Ctrl+Shift+Q to stop Godot from locking the dll.
-mkdir bin
-cd game-lib && ^
+cd .. && ^
 
 del bin\libcosmic.windows.template_debug.x86_64.dll && ^
 scons target=template_debug && ^
