@@ -7,23 +7,8 @@ var row := dimension.x
 var col := dimension.y
 var cll := dimension.z # cells
 var dimension_sum := row * col * cll
-
-# https://www.paridebroggi.com/blogpost/2015/06/16/optimized-cube-opengl-triangle-strip/
-var vertices := PackedFloat32Array([
-	1.0, 1.0, 1.0,
-	0.0, 1.0, 1.0,
-	1.0, 1.0, 0.0,
-	0.0, 1.0, 0.0,
-	1.0, 0.0, 1.0,
-	0.0, 0.0, 1.0,
-	0.0, 0.0, 0.0,
-	1.0, 0.0, 0.0
-])
-var elements := PackedInt32Array([
-	3, 2, 6, 7, 4, 2, 0,
-	3, 1, 6, 5, 4, 1, 0
-])
 func _ready():
+	# https://www.paridebroggi.com/blogpost/2015/06/16/optimized-cube-opengl-triangle-strip/
 	var face_vert := PackedVector3Array([
 		Vector3(1, 1, 1), # 0 One
 		Vector3(0, 1, 1), # 1 Up, Back
@@ -39,8 +24,9 @@ func _ready():
 		# It use previous 2 indexes, so it's pretty hard to follow
 #		3, 2, 6, 7, 4, 2, 0,
 #		3, 1, 6, 5, 4, 1, 0
-		2, 3, 7, 6, 5, 3, 1,
-		0, 5, 4, 7, 0, 2, 3
+#		2, 3, 7, 6, 5, 3, 1,
+#		0, 5, 4, 7, 0, 2, 3
+		0, 1, 2, 3, 6, 7
 	])
 #	var face_uv := PackedVector2Array()
 

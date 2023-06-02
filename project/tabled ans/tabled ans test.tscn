@@ -1,17 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://bymnvvnx1nd2u"]
+[gd_scene load_steps=9 format=3 uid="uid://bymnvvnx1nd2u"]
 
 [ext_resource type="Script" path="res://tabled ans/chunk_server.gd" id="1_o51el"]
 [ext_resource type="Environment" uid="uid://c5gyx8wtph1ts" path="res://scene_color.tres" id="3_6n8q3"]
+[ext_resource type="Script" path="res://tabled ans/exam.gd" id="3_qow1a"]
 [ext_resource type="Script" path="res://tabled ans/mesh.gd" id="3_w8x0m"]
 [ext_resource type="PackedScene" uid="uid://c57yv34qdd03m" path="res://model/kira/kira.tscn" id="4_kj1ay"]
 [ext_resource type="Script" path="res://tabled ans/threads_mgr.gd" id="5_invfk"]
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_rs4ll"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_6piby"]
 _surfaces = [{
 "aabb": AABB(0, 0, 0, 1.00001, 1.00001, 1.00001),
 "format": 4097,
-"index_count": 14,
-"index_data": PackedByteArray(2, 0, 3, 0, 7, 0, 6, 0, 5, 0, 3, 0, 1, 0, 0, 0, 5, 0, 4, 0, 7, 0, 0, 0, 2, 0, 3, 0),
+"index_count": 6,
+"index_data": PackedByteArray(0, 0, 1, 0, 2, 0, 3, 0, 6, 0, 7, 0),
 "primitive": 4,
 "vertex_count": 8,
 "vertex_data": PackedByteArray(0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 63, 0, 0, 0, 0, 0, 0, 0, 0)
@@ -32,9 +33,18 @@ use_collision = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="chunks"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
-mesh = SubResource("ArrayMesh_rs4ll")
+mesh = SubResource("ArrayMesh_6piby")
 surface_material_override/0 = SubResource("StandardMaterial3D_x2h1j")
 script = ExtResource("3_w8x0m")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="chunks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 17, 8)
+script = ExtResource("3_qow1a")
+num_to_show = 100374
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="chunks/MeshInstance3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 0.5)
+visible = false
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_6n8q3")
