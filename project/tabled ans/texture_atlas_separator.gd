@@ -20,13 +20,13 @@ func _ready():
 
 	if Webp_quality_set == WebPQuality.Low:
 		webp_lossless = false
-		webp_quality = 0.50
+		webp_quality = 0.50 # Go even lower won't help you with file size, and it looks muddy
 	if Webp_quality_set == WebPQuality.High:
 		webp_lossless = false
-		webp_quality = 0.80
+		webp_quality = 0.80 # Better off using lossless if you want go higher than 80
 	if Webp_quality_set == WebPQuality.Lossless:
 		webp_lossless = true
-		webp_quality = 1.0
+		webp_quality = 1.0 # Use it for pixel art
 
 	var img_out := Image.create(DIMENSION, DIMENSION, false, Image.FORMAT_RGBA8)
 
