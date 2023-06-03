@@ -1,94 +1,97 @@
 @tool
 extends MeshInstance3D
+const ANY_UNSIGNED_INT_MAX = -1
+# "-1" means 255 in PackedByteArray. Because it's maximum of 1 byte number, it's 255.
+enum BlockType { Air, Dirt, Grass, Stone, Void_grass, Crystal_blue, Error=ANY_UNSIGNED_INT_MAX }
 
-enum { Air, Dirt, Grass, Stone, Void_grass, Crystal_blue, Error=-1}
-enum Neighbour { Left=1, Right=1<<1, Down=1<<2, Up=1<<3, Forward=1<<4, Back=1<<5 }
-
-var dimension := Vector3i(16, 16, 16)
+# Dimensions of the chunk
+# Should be 32 cubed for able to keep load CPU loaded and not too slow to generate
+var dimension := Vector3i(32, 32, 32)
 var row := dimension.x
 var col := dimension.y
-var cll := dimension.z # cells
-var dimension_sum := row * col * cll
+var cel := dimension.z # number of cells
+var dimension_sum := row * col * cel # total number of cells
 
-
-@export_range(0, 1 << 20, 3) var num_to_show := 0
+# Number of vertices to show in the mesh to show triangle rendering order
+const TRIANGLE_STEP := 3
+@export_range(0, 1 << 17, TRIANGLE_STEP) var vertices_to_show := 0
 var prev_num := 0
-func _physics_process(delta: float) -> void:
-	if prev_num == num_to_show: return
-	else: prev_num = num_to_show
+# Built-in function. Updates the mesh based on the number of vertices to show
+func _physics_process(_delta: float) -> void:
+	# Only update the mesh if the number of vertices to show has changed
+	if prev_num == vertices_to_show:
+		return
+	else:
+		prev_num = vertices_to_show
 
-	if num_to_show < 3:
+	# If there are fewer than 3 vertices to show, clear the mesh and return
+	if vertices_to_show < 3:
 		mesh = null
 		return
 
-	var blk_id_arr := _generate_block_id(position)
-	var neighbours_arr := _generate_neighbours_arr(blk_id_arr)
+	# Generate block IDs for each cell in the chunk
+	var block_ids := _generate_block_id(position)
 
-	var face_vert := PackedVector3Array()
-	var face_index := PackedInt32Array()
+	# Arrays to store face vertices and indices
+	var face_vertices := PackedVector3Array()
+	var face_indices := PackedInt32Array()
 
-	var LEFT_FACE    := PackedVector3Array([Vector3(0,0,1),Vector3(0,0,0),Vector3(0,1,1),Vector3(0,1,0)])
-	var RIGHT_FACE   := PackedVector3Array([LEFT_FACE[1],LEFT_FACE[0],LEFT_FACE[3],LEFT_FACE[2]])
-	RIGHT_FACE = vectorized_add_v3([Vector3.RIGHT,Vector3.RIGHT,Vector3.RIGHT,Vector3.RIGHT], RIGHT_FACE)
-	var DOWN_FACE    := PackedVector3Array([Vector3(1,0,1),Vector3(1,0,0),Vector3(0,0,1),Vector3(0,0,0)])
-	var UP_FACE      := PackedVector3Array([DOWN_FACE[1],DOWN_FACE[0],DOWN_FACE[3],DOWN_FACE[2]])
-	UP_FACE    = vectorized_add_v3([Vector3.UP,Vector3.UP,Vector3.UP,Vector3.UP], UP_FACE)
-	var FORWARD_FACE := PackedVector3Array([Vector3(0,0,0),Vector3(1,0,0),Vector3(0,1,0),Vector3(1,1,0)])
-	var BACK_FACE    := PackedVector3Array([FORWARD_FACE[1],FORWARD_FACE[0],FORWARD_FACE[3],FORWARD_FACE[2]])
-	BACK_FACE  = vectorized_add_v3([Vector3.BACK,Vector3.BACK,Vector3.BACK,Vector3.BACK], BACK_FACE)
+	# Define face/quad vertices for each direction. Vector3(Right, Up, Back)
+	var LF_VERTS  := PackedVector3Array([Vector3(0,0,1),Vector3(0,0,0),Vector3(0,1,1),Vector3(0,1,0)])
+	var RT_VERTS  := PackedVector3Array([LF_VERTS[1],LF_VERTS[0],LF_VERTS[3],LF_VERTS[2]])
+	RT_VERTS = vectorized_add_v3([Vector3.RIGHT,Vector3.RIGHT,Vector3.RIGHT,Vector3.RIGHT], RT_VERTS)
+	var DN_VERTS  := PackedVector3Array([Vector3(1,0,1),Vector3(1,0,0),Vector3(0,0,1),Vector3(0,0,0)])
+	var UP_VERTS  := PackedVector3Array([DN_VERTS[1],DN_VERTS[0],DN_VERTS[3],DN_VERTS[2]])
+	UP_VERTS = vectorized_add_v3([Vector3.UP,Vector3.UP,Vector3.UP,Vector3.UP], UP_VERTS)
+	var FWD_VERTS := PackedVector3Array([Vector3(0,0,0),Vector3(1,0,0),Vector3(0,1,0),Vector3(1,1,0)])
+	var BK_VERTS  := PackedVector3Array([FWD_VERTS[1],FWD_VERTS[0],FWD_VERTS[3],FWD_VERTS[2]])
+	BK_VERTS = vectorized_add_v3([Vector3.BACK,Vector3.BACK,Vector3.BACK,Vector3.BACK], BK_VERTS)
 
+	# Iterate over each cell in the chunk
 	for x in row:
 		for y in col:
-			for z in cll:
-				var i := flat_3d_to_1d(x, y, z)
-				var tmp_vert := PackedVector3Array([Vector3(x,y,z),Vector3(x,y,z),Vector3(x,y,z),Vector3(x,y,z)])
-				if blk_id_arr[i] != Air:
-					# chatGPT made it less cluttered
-#					if x-1 >= 0: # first is messy, then chatGPT make it short in python code
-#						if blk_id_arr[i-1] == Air:
-#							face_vert.append_array(vectorized_add_v3(tmp_vert, LEFT_FACE))
-#					else:
-#						face_vert.append_array(vectorized_add_v3(tmp_vert, LEFT_FACE))
+			for z in cel:
+				var cell_index := flat_3d_to_1d(x, y, z)
+				var cell_position := Vector3(x, y, z)
+				var tmp_vert := PackedVector3Array([cell_position,cell_position,cell_position,cell_position])
 
-					# Second, chatGPT output this code in python
-#					face_vert.append_array(vectorized_add_v3(tmp_vert, LEFT_FACE)) if x-1 < 0 or blk_id_arr[i-1] == Air else None
+				# Add face vertices based on neighboring blocks
+				if block_ids[cell_index] != BlockType.Air:
+					face_vertices.append_array(vectorized_add_v3(tmp_vert, LF_VERTS)) if x-1 < 0 or block_ids[cell_index-1] == 0 else null
+					face_vertices.append_array(vectorized_add_v3(tmp_vert, RT_VERTS)) if x+1 >= row or block_ids[cell_index+1] == 0 else null
+					face_vertices.append_array(vectorized_add_v3(tmp_vert, DN_VERTS)) if y-1 < 0 or block_ids[cell_index-row] == 0 else null
+					face_vertices.append_array(vectorized_add_v3(tmp_vert, UP_VERTS)) if y+1 >= col or block_ids[cell_index+row] == 0 else null
+					face_vertices.append_array(vectorized_add_v3(tmp_vert, FWD_VERTS)) if z-1 < 0 or block_ids[cell_index-(row*col)] == 0 else null
+					face_vertices.append_array(vectorized_add_v3(tmp_vert, BK_VERTS)) if z+1 >= cel or block_ids[cell_index+(row*col)] == 0 else null
 
-					# Third, I translated this code to GDScript
-					face_vert.append_array(vectorized_add_v3(tmp_vert, LEFT_FACE)) if x-1 < 0 or blk_id_arr[i-1] == Air else null
-					face_vert.append_array(vectorized_add_v3(tmp_vert, RIGHT_FACE)) if x+1 >= row or blk_id_arr[i+1] == Air else null
-					face_vert.append_array(vectorized_add_v3(tmp_vert, DOWN_FACE)) if y-1 < 0 or blk_id_arr[i-row] == Air else null
-					face_vert.append_array(vectorized_add_v3(tmp_vert, UP_FACE)) if y+1 >= col or blk_id_arr[i+row] == Air else null
-					face_vert.append_array(vectorized_add_v3(tmp_vert, FORWARD_FACE)) if z-1 < 0 or blk_id_arr[i-(row*col)] == Air else null
-					face_vert.append_array(vectorized_add_v3(tmp_vert, BACK_FACE)) if z+1 >= cll or blk_id_arr[i+(row*col)] == Air else null
+	# Generate face indices
+	for iv in range(0, face_vertices.size(), 4):
+		face_indices.append_array([0+iv, 1+iv, 2+iv, 2+iv, 1+iv, 3+iv])
 
-	for iv in range(0, face_vert.size(), 4):
-		face_index.append_array([0+iv, 1+iv, 2+iv, 2+iv, 1+iv, 3+iv])
+	# Resize the face indexes if necessary
+	if vertices_to_show >= 0 and vertices_to_show <= face_indices.size(): face_indices.resize(vertices_to_show)
 
-	for x in row:
-		for y in col:
-			for z in cll:
-				var i := flat_3d_to_1d(x, y, z)
-				printraw(neighbours_arr[i])
-
-	if num_to_show >= 0 and num_to_show <= face_index.size():
-		face_index.resize(num_to_show)
-
+	# Create the mesh using the generated vertices and indices
 	var mesh_data := []
 	mesh_data.resize(ArrayMesh.ARRAY_MAX)
-	mesh_data[ArrayMesh.ARRAY_VERTEX] = face_vert
-	mesh_data[ArrayMesh.ARRAY_INDEX] = face_index
+	mesh_data[ArrayMesh.ARRAY_VERTEX]= face_vertices
+	mesh_data[ArrayMesh.ARRAY_INDEX] = face_indices
 
-	var arr_mesh := ArrayMesh.new()
-	arr_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_data)
+	var array_mesh := ArrayMesh.new()
+	array_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_data)
+	mesh = array_mesh
 
-	mesh = arr_mesh
-
-
+# Convert 3D coordinates to a 1D index
+# There's no easy way to make 3D array without making it confusing to use. So I'll keep using 1D array to store the blocks
 func flat_3d_to_1d(x: int, y: int, z: int) -> int: return x + (y * row) + (z * row * col)
 
-# Avoid using this, as it cost more than flat_3d_to_1d
+# Convert 1D index to a 3D coordinates. Avoid using this, as it cost more than flat_3d_to_1d
+# Division and modulo always cost way more performance than multiplication
+# If the compiler failed to convert the division to constant or modulo to bitwise AND
+@warning_ignore("integer_division")
 func expand_1d_to_3d(i: int) -> Vector3i: return Vector3i(i % row, i / row, i / (row * col))
 
+# Perform addition of two PackedVector3Arrays
 func vectorized_add_v3(a: PackedVector3Array, b: PackedVector3Array) -> PackedVector3Array:
 	if a.size() != b.size():
 		push_error("both PackedVector3Array in vectorized_add_v3() are not the same size,",
@@ -98,10 +101,11 @@ func vectorized_add_v3(a: PackedVector3Array, b: PackedVector3Array) -> PackedVe
 	for i in a.size(): ret[i] = a[i] + b[i]
 	return ret
 
+# Generate block IDs based on noise and position
 func _generate_block_id(pos: Vector3 = position) -> PackedByteArray:
-	var ret := PackedByteArray()
-	ret.resize(dimension_sum)
-	ret.fill(Error)
+	var block_ids := PackedByteArray()
+	block_ids.resize(dimension_sum)
+	block_ids.fill(BlockType.Error)
 
 	var noi := FastNoiseLite.new()
 	noi.set_offset(pos)
@@ -112,40 +116,21 @@ func _generate_block_id(pos: Vector3 = position) -> PackedByteArray:
 
 	for x in row:
 		for y in col:
-			for z in cll:
+			for z in cel:
 				var val := noi.get_noise_3d(x, y, z)
 				var rnd_deep := rng.randi()
 #				var density := -0.5 + (pos.y + y / 200.0)
 
-				var blk_id := Air
+				var blk_id := BlockType.Air
 				if val > -0.3:
-					if y > col - 3:
-						blk_id = Grass
-					elif y > (rnd_deep & 1) + col - 7:
-						blk_id = Dirt
-					elif y > 0:
-						blk_id = Stone
+					if pos.y > col - 3:
+						blk_id = BlockType.Grass
+					elif pos.y > (rnd_deep & 1) + col - 7:
+						blk_id = BlockType.Dirt
+					elif pos.y >= 0:
+						blk_id = BlockType.Stone
+				block_ids[flat_3d_to_1d(x, y, z)] = blk_id
 
-#				blk_id = Dirt # Test the culling
-				ret[flat_3d_to_1d(x, y, z)] = blk_id
+	if block_ids.has(BlockType.Error): push_error("Found unused in the block id array ", block_ids.find(BlockType.Error))
 
-	if ret.has(Error): push_error("Found unused in the block id array ", ret.find(Error))
-	return ret
-
-func _generate_neighbours_arr(blk_id_arr: PackedByteArray) -> PackedByteArray:
-	var ret := PackedByteArray()
-	ret.resize(dimension_sum)
-
-	for x in row:
-		for y in col:
-			for z in cll:
-				var i := flat_3d_to_1d(x, y, z)
-				var left    := Neighbour.Left    if x-1 > 0   and blk_id_arr[i - 1] else 0
-				var right   := Neighbour.Right   if x+1 < row and blk_id_arr[i + 1] else 0
-				var down    := Neighbour.Down    if y-1 > 0   and blk_id_arr[i - row] else 0
-				var up      := Neighbour.Up      if y+1 < col and blk_id_arr[i + row] else 0
-				var forward := Neighbour.Forward if z-1 > 0   and blk_id_arr[i - (row * col)] else 0
-				var back    := Neighbour.Back    if z+1 < cll and blk_id_arr[i + (row * col)] else 0
-				ret[i] = left | right | down | up | forward | back
-
-	return ret
+	return block_ids
