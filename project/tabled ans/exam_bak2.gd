@@ -6,7 +6,7 @@ enum BlockID { Air, Dirt, Grass, Stone, Void_grass, Crystal_blue, Error=ANY_UNSI
 
 # Dimensions of the chunk
 # Should be 32 cubed for able to keep load CPU loaded and not too slow to generate
-var dimension := Vector3i(8, 128, 8)
+var dimension := Vector3i(32, 32, 32)
 var row := dimension.x
 var col := dimension.y
 var cel := dimension.z # number of cells
@@ -58,22 +58,15 @@ func _physics_process(_delta: float) -> void:
 
 				# Add face vertices based on neighboring blocks
 				if block_ids[cell_index] != BlockID.Air:
-					if x-1 < 0 or block_ids[cell_index-1] == BlockID.Air:
-						face_vertices.append_array(vectorized_add_v3(tmp_vert, LF_VERTS))
-					if x+1 >= row or block_ids[cell_index+1] == BlockID.Air:
-						face_vertices.append_array(vectorized_add_v3(tmp_vert, RT_VERTS))
-					if y-1 < 0 or block_ids[cell_index-row] == BlockID.Air:
-						face_vertices.append_array(vectorized_add_v3(tmp_vert, DN_VERTS))
-					if y+1 >= col or block_ids[cell_index+row] == BlockID.Air:
-						face_vertices.append_array(vectorized_add_v3(tmp_vert, UP_VERTS))
-					if z-1 < 0 or block_ids[cell_index-(row*col)] == BlockID.Air:
-						face_vertices.append_array(vectorized_add_v3(tmp_vert, FWD_VERTS))
-					if z+1 >= cel or block_ids[cell_index+(row*col)] == BlockID.Air:
-						face_vertices.append_array(vectorized_add_v3(tmp_vert, BK_VERTS))
+					if x-1 < 0 or block_ids[cell_index-1] == 0: face_vertices.append_array(vectorized_add_v3(tmp_vert, LF_VERTS)) 
+					if x+1 >= row or block_ids[cell_index+1] == 0: face_vertices.append_array(vectorized_add_v3(tmp_vert, RT_VERTS))
+					if y-1 < 0 or block_ids[cell_index-row] == 0: face_vertices.append_array(vectorized_add_v3(tmp_vert, DN_VERTS))
+					if y+1 >= col or block_ids[cell_index+row] == 0: face_vertices.append_array(vectorized_add_v3(tmp_vert, UP_VERTS))
+					if z-1 < 0 or block_ids[cell_index-(row*col)] == 0: face_vertices.append_array(vectorized_add_v3(tmp_vert, FWD_VERTS))
+					if z+1 >= cel or block_ids[cell_index+(row*col)] == 0: face_vertices.append_array(vectorized_add_v3(tmp_vert, BK_VERTS))
 
 	# Generate face indices
 	var face_indices := PackedInt32Array()
-	@warning_ignore("narrowing_conversion")
 	face_indices.resize(face_vertices.size() * 1.5)
 	for iv in range(0, face_vertices.size(), 4):
 		var index_offset := iv * 1.5
@@ -86,32 +79,45 @@ func _physics_process(_delta: float) -> void:
 
 	# Generate face uv
 	var face_uv := PackedVector2Array()
-	var texture_atlas_size := Vector2i(5, 3)
-	var trow: float = texture_atlas_size.x
+#	face_uv.resize(face_vertices.size())
+	var texture_atlas_size := Vector2i(5, 1)
+	var trow := texture_atlas_size.x
 	var init_uv := PackedVector2Array([
 			Vector2.ZERO, Vector2.DOWN / texture_atlas_size.y,
 			Vector2.RIGHT / texture_atlas_size.x, Vector2.ONE / Vector2(texture_atlas_size)
 	])
-
+#	for iv in range(0, face_vertices.size(), 4):
+#		var shift_uv := Vector2.ZERO
+#		face_uv.append_array(
+#			init_uv
+#		)
+	
 	for x in row:
 		for y in col:
 			for z in cel:
 				var cell_index := flat_3d_to_1d(x, y, z)
 				var shift_uv := Vector2(
-					(block_ids[cell_index] - 1) % int(trow) / trow,
-					int((block_ids[cell_index] - 1) / trow) / trow
+					float((block_ids[cell_index] - 1) % trow) / float(trow),
+					float(block_ids[cell_index] - 1) / float(trow)
 				)
 				var pos_uv := PackedVector2Array([
 					init_uv[0] + shift_uv, init_uv[1] + shift_uv,
 					init_uv[2] + shift_uv, init_uv[3] + shift_uv
 				])
 				if block_ids[cell_index] != BlockID.Air:
-					if x-1 < 0 or block_ids[cell_index-1] == BlockID.Air: face_uv.append_array(pos_uv)
+					if x-1 < 0 or block_ids[cell_index-1] == BlockID.Air: face_uv.append_array(pos_uv) 
 					if x+1 >= row or block_ids[cell_index+1] == BlockID.Air: face_uv.append_array(pos_uv)
 					if y-1 < 0 or block_ids[cell_index-row] == BlockID.Air: face_uv.append_array(pos_uv)
 					if y+1 >= col or block_ids[cell_index+row] == BlockID.Air: face_uv.append_array(pos_uv)
 					if z-1 < 0 or block_ids[cell_index-(row*col)] == BlockID.Air: face_uv.append_array(pos_uv)
 					if z+1 >= cel or block_ids[cell_index+(row*col)] == BlockID.Air: face_uv.append_array(pos_uv)
+
+	print(face_vertices.size())
+	print(face_uv.size())
+	print(face_uv[0])
+	print(face_uv[1])
+	print(face_uv[2])
+	print(face_uv[3])
 
 	# Resize the face indexes if necessary
 	if vertices_to_show >= 0 and vertices_to_show <= face_indices.size(): face_indices.resize(vertices_to_show)
@@ -127,19 +133,19 @@ func _physics_process(_delta: float) -> void:
 	array_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh_data)
 	mesh = array_mesh
 
-	mesh.surface_set_material(0, preload("res://image/mat_chunk.tres"))
+	mesh.surface_set_material(0, preload("res://image/chunk.tres"))
 
 #	print_debug((Time.get_ticks_usec() - start) / 1000.0)
 
 # Convert 3D coordinates to a 1D index
-# There's no easy way to make 3D array without making it confusing to use
-# So I'll keep using 1D array to store the blocks
+# There's no easy way to make 3D array without making it confusing to use. So I'll keep using 1D array to store the blocks
 func flat_3d_to_1d(x: int, y: int, z: int) -> int: return x + (y * row) + (z * row * col)
 
 # Convert 1D index to a 3D coordinates. Avoid using this, as it cost more than flat_3d_to_1d
 # Division and modulo always cost way more performance than multiplication
 # If the compiler failed to convert the division to constant or modulo to bitwise AND
 @warning_ignore("integer_division")
+func expand_1d_to_2d(i: int) -> Vector2i: return Vector2i(i % row, i / row)
 func expand_1d_to_3d(i: int) -> Vector3i: return Vector3i(i % row, i / row, i / (row * col))
 
 func vectorized_add_v3(a: PackedVector3Array, b: PackedVector3Array) -> PackedVector3Array:
@@ -173,16 +179,15 @@ func _generate_block_id(pos: Vector3 = position) -> PackedByteArray:
 
 				var blk_id := BlockID.Air
 				if val > -0.3:
-					if pos.y + y < (rnd_deep & 1) + 58:
-						blk_id = BlockID.Stone
-					elif pos.y + y < 62:
+					if pos.y > col - 3:
 						blk_id = BlockID.Grass
-					elif pos.y + y < 64:
+					elif pos.y > (rnd_deep & 1) + col - 7:
 						blk_id = BlockID.Dirt
+					elif pos.y >= 0:
+						blk_id = BlockID.Stone
 				block_ids[flat_3d_to_1d(x, y, z)] = blk_id
 
-	if block_ids.has(BlockID.Error):
-		push_error("Found unused in the block id array ", block_ids.find(BlockID.Error))
+	if block_ids.has(BlockID.Error): push_error("Found unused in the block id array ", block_ids.find(BlockID.Error))
 
 	return block_ids
 
