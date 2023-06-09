@@ -1,12 +1,14 @@
 @tool
 extends MeshInstance3D
 const ANY_UNSIGNED_INT_MAX = -1
-# "-1" means 255 in PackedByteArray. Because it's maximum of 1 byte number, it's 255.
+# "-1" means 255 in PackedByteArray. Because it's maximum of 1 byte number, it's 255
 enum BlockID { Air, Dirt, Grass, Stone, Void_grass, Crystal_blue, Error=ANY_UNSIGNED_INT_MAX }
 
 # Dimensions of the chunk
-# Should be 32 cubed for able to keep load CPU loaded and not too slow to generate
-var dimension := Vector3i(8, 128, 8)
+# Should be 32 cubed for able to keep load CPU loaded and not too slow to generate. Keep it close to 150ms
+# If that doesn't work, use SMT as band-aid solution
+# No! Don't do that! It hogs people's computer! Instead, try to reduce cache miss
+var dimension := Vector3i(32, 32, 32)
 var row := dimension.x
 var col := dimension.y
 var cel := dimension.z # number of cells
@@ -18,7 +20,7 @@ const TRIANGLE_STEP := 3
 var prev_num := 0
 # Built-in function. Updates the mesh based on the number of vertices to show
 func _physics_process(_delta: float) -> void:
-	var start := Time.get_ticks_usec()
+#	var start := Time.get_ticks_usec()
 	# Only update the mesh if the number of vertices to show has changed
 	if prev_num == vertices_to_show:
 		return
@@ -32,7 +34,6 @@ func _physics_process(_delta: float) -> void:
 
 	# Generate block IDs for each cell in the chunk
 	var block_ids := _generate_block_id(position)
-	var neighbours := _generate_neighbours_arr(block_ids)
 
 	# Arrays to store face vertices and indices
 	var face_vertices := PackedVector3Array()
@@ -98,8 +99,8 @@ func _physics_process(_delta: float) -> void:
 			for z in cel:
 				var cell_index := flat_3d_to_1d(x, y, z)
 				var shift_uv := Vector2(
-					(block_ids[cell_index] - 1) % int(trow) / trow,
-					int((block_ids[cell_index] - 1) / trow) / trow
+					int(block_ids[cell_index] - 1) % int(trow) / float(trow),
+					int((block_ids[cell_index] - 1) / float(trow)) / float(trow)
 				)
 				var pos_uv := PackedVector2Array([
 					init_uv[0] + shift_uv, init_uv[1] + shift_uv,
@@ -185,22 +186,3 @@ func _generate_block_id(pos: Vector3 = position) -> PackedByteArray:
 		push_error("Found unused in the block id array ", block_ids.find(BlockID.Error))
 
 	return block_ids
-
-enum Neighbour { Left=1, Right=1<<1, Down=1<<2, Up=1<<3, Forward=1<<4, Back=1<<5 }
-func _generate_neighbours_arr(block_ids: PackedByteArray) -> PackedByteArray:
-	var ret := PackedByteArray()
-	ret.resize(dimension_sum)
-
-	for x in row:
-		for y in col:
-			for z in cel:
-				var i := flat_3d_to_1d(x, y, z)
-				var left    := Neighbour.Left    if x-1 > 0   and block_ids[i - 1] else 0
-				var right   := Neighbour.Right   if x+1 < row and block_ids[i + 1] else 0
-				var down    := Neighbour.Down    if y-1 > 0   and block_ids[i - row] else 0
-				var up      := Neighbour.Up      if y+1 < col and block_ids[i + row] else 0
-				var forward := Neighbour.Forward if z-1 > 0   and block_ids[i - (row * col)] else 0
-				var back    := Neighbour.Back    if z+1 < cel and block_ids[i + (row * col)] else 0
-				ret[i] = left | right | down | up | forward | back
-
-	return ret

@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://cgqsdxsv2s35q"]
+
+[ext_resource type="Script" path="res://demo/render.gd" id="1_gtchn"]
+[ext_resource type="PackedScene" uid="uid://c57yv34qdd03m" path="res://model/kira/kira.tscn" id="2_1y6au"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_vw72q"]
+sky_top_color = Color(0.121569, 0.301961, 0.54902, 1)
+sky_horizon_color = Color(0.670588, 0.490196, 0.0313726, 1)
+ground_horizon_color = Color(0.670588, 0.611765, 0, 1)
+use_debanding = false
+
+[sub_resource type="Sky" id="Sky_w0vkw"]
+sky_material = SubResource("ProceduralSkyMaterial_vw72q")
+
+[sub_resource type="Environment" id="Environment_xyxd3"]
+background_mode = 2
+sky = SubResource("Sky_w0vkw")
+tonemap_mode = 1
+tonemap_white = 16.0
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+
+[node name="demo" type="Node3D"]
+
+[node name="render" type="Node3D" parent="."]
+script = ExtResource("1_gtchn")
+
+[node name="kira" parent="." instance=ExtResource("2_1y6au")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 65, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 64.5, 0)
+use_collision = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_xyxd3")
+
+[connection signal="tree_exiting" from="render" to="render" method="_on_tree_exiting"]
